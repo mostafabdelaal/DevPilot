@@ -1,9 +1,17 @@
 # DevPilot AI — Software Design Document (SDD) & Full Project Plan
 
-> Status: Draft v0.1 · Stage: Prototype → Production planning
+> Status: Draft v0.2 · Stage: Prototype → Production planning
+> Phase 0 (repository foundation) complete; production architecture direction pending sign-off.
 > Source of truth for scope, architecture, and roadmap. Data shapes derive from
 > [`handoff/BACKEND_HANDOFF.md`](handoff/BACKEND_HANDOFF.md); design from
 > [`design/DESIGN_TOKENS.md`](design/DESIGN_TOKENS.md).
+
+### Document control
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.1 | 2026-07-18 | DevPilot team | Initial full SDD (38 sections) |
+| 0.2 | 2026-07-18 | DevPilot team | Mark Phase 0 done; add timeline, sprints, assumptions, glossary, decision log, sequence flows |
 
 ## Table of contents
 
@@ -45,6 +53,11 @@
 36. Estimated Costs
 37. Acceptance Criteria
 38. Success Metrics
+39. Assumptions, Constraints & Dependencies
+40. Stakeholders & RACI
+41. Open Decisions (ADR Log)
+42. Glossary
+- Appendix A — Key Sequence Flows
 
 ---
 
@@ -352,7 +365,7 @@ consistent error envelope `{ error: { code, message, details } }`, rate limiting
 
 ## 28. Development Roadmap
 
-- **Phase 0 — Foundations (current):** repo structure, git strategy, docs, SDD. ✅ in progress.
+- **Phase 0 — Foundations:** repo structure, git strategy, docs, SDD. ✅ **Done.**
 - **Phase 1 — Front-end production build:** migrate the 16 prototype screens to the chosen
   framework, preserving design; component library + design tokens.
 - **Phase 2 — Backend core:** auth/GitHub, projects, analysis pipeline (detect → scan →
@@ -390,14 +403,35 @@ consistent error envelope `{ error: { code, message, details } }`, rate limiting
   documented, deployed to staging).
 - Backlog grooming weekly; capacity-based commitment; demo + retro each sprint end.
 
+**Definition of Done:** code reviewed & merged to `develop`; unit + integration tests passing;
+CI green (lint/types/tests/security); docs updated; deployed to staging; acceptance criteria met.
+
+Initial sprint outline (maps to §28 phases; dates relative to kickoff):
+
+| Sprint | Focus | Key deliverables |
+|---|---|---|
+| S0 | Foundation (done) | Repo, git strategy, docs, SDD |
+| S1 | FE shell | Design tokens + Tailwind config; app shell (sidebar, topbar, command palette) |
+| S2 | FE core screens | Dashboard, Analysis, Generator rebuilt from prototype |
+| S3 | FE remaining screens + API contract stubs | Security, Cost, Deploy, settings screens; typed API client against handoff shapes |
+| S4 | Backend scaffold | Auth/GitHub App, Postgres schema + migrations, projects service |
+| S5 | Analysis pipeline | Clone sandbox, detector, dependency resolver, progress SSE |
+| S6 | Generation + scanning | Asset templating, Trivy/gitleaks adapters, findings |
+| S7 | Cost + deploy | Multi-cloud cost estimator; streamed deploy runner + rollback |
+| S8 | Ops + hardening | Notifications, audit, billing, observability, perf, DR drill |
+
 ## 33. Milestones
 
-- **M1** — Repo + docs + SDD (Phase 0). 
-- **M2** — Production front-end shell + 3 core screens.
-- **M3** — First real analysis end-to-end (detect → generate) against a live repo.
-- **M4** — Security + cost live.
-- **M5** — Streamed deploy + rollback.
-- **M6** — GA (team/billing, hardening, SLOs met).
+| Milestone | Target | Exit criteria | Status |
+|---|---|---|---|
+| **M1** — Foundation | Wk 0 | Repo, git strategy, docs, SDD in place | ✅ Done |
+| **M2** — FE shell + 3 core screens | Wk 4 | Dashboard/Analysis/Generator match prototype; tokens systemized | Planned |
+| **M3** — First real analysis | Wk 10 | Live repo → detect → generate assets end-to-end | Planned |
+| **M4** — Security + cost | Wk 14 | Findings + multi-cloud cost live against handoff shapes | Planned |
+| **M5** — Streamed deploy | Wk 18 | Deploy to staging with live logs + rollback | Planned |
+| **M6** — GA | Wk 24 | Team/billing, hardening, SLOs met, DR drill passed | Planned |
+
+Targets are indicative (single squad, 2-week sprints); re-baseline after S1 velocity is known.
 
 ## 34. Future Enhancements
 
@@ -444,6 +478,121 @@ consistent error envelope `{ error: { code, message, details } }`, rate limiting
 - **Security impact:** median time-to-remediate high findings.
 - **Reliability:** deploy success rate > 95%; control-plane uptime 99.9%.
 - **Business:** paid seats, net revenue retention, weekly active teams.
+
+## 39. Assumptions, Constraints & Dependencies
+
+**Assumptions**
+- GitHub is the launch VCS; other providers come later (§34).
+- The prototype's data shapes are the API contract (high-fidelity, per handoff).
+- One engineering squad delivers the phased roadmap; re-baseline on measured velocity.
+
+**Constraints**
+- User source code must never be persisted; clones are ephemeral (hard security constraint).
+- GitHub access is read-only; writes happen only as PRs with approval.
+- Visual design is fixed to the prototype tokens; no redesign without sign-off.
+- `apps/web/support.js` is vendored/generated and dropped at Phase 1, not maintained.
+
+**Dependencies (external)**
+- GitHub App / OAuth, Trivy + gitleaks, cloud provider APIs (AWS/GCP/Azure price lists +
+  cluster APIs EKS/GKE/AKS), Slack/email for notifications, Google Fonts (Geist, JetBrains Mono).
+
+## 40. Stakeholders & RACI
+
+| Activity | Product | Eng Lead | Frontend | Backend | Security | DevOps |
+|---|---|---|---|---|---|---|
+| Scope / roadmap | A | R | C | C | C | C |
+| Architecture (SDD) | C | A/R | C | R | C | R |
+| FE screen build | C | A | R | C | I | I |
+| Analysis/gen pipeline | I | A | I | R | C | C |
+| Deploy runner | I | A | I | R | C | R |
+| Security controls | C | C | I | C | A/R | C |
+| CI/CD + infra | I | C | I | C | C | A/R |
+
+R = Responsible · A = Accountable · C = Consulted · I = Informed.
+
+## 41. Open Decisions (ADR Log)
+
+Record each as an ADR under `docs/architecture/adr-NNN-*.md` once resolved.
+
+| # | Decision | Options | Status |
+|---|---|---|---|
+| ADR-001 | Production front-end architecture | Next.js + TS (recommended) · static multi-page HTML/CSS/JS · keep dc prototype as reference | **Open** |
+| ADR-002 | Backend language/runtime | Node/TypeScript · Go | Open |
+| ADR-003 | Job queue | Redis (BullMQ) · NATS · cloud-native (SQS/PubSub) | Open |
+| ADR-004 | Asset templating engine | Language-native templates · dedicated template DSL | Open |
+| ADR-005 | Streaming transport for progress/logs | SSE · WebSocket · both | Open |
+| ADR-006 | Clone-sandbox isolation | Restricted K8s pods · microVMs (Firecracker) | Open |
+| ADR-007 | License model | Proprietary · open-source (which OSI license) | Open |
+
+## 42. Glossary
+
+- **Analysis** — one pipeline run against a repo at a ref (clone → detect → scan → score → generate → cost).
+- **Asset / GeneratedAsset** — a produced DevOps file (Dockerfile, Compose, K8s, Helm, Terraform, CI/CD).
+- **dc / dc-runtime** — the Claude Design component framework; `apps/web/support.js` is its generated runtime.
+- **Deploy runner** — worker that applies a bundle to a cluster and streams logs.
+- **Ephemeral sandbox** — disposable, network-restricted environment for cloning/scanning; leaves no source behind.
+- **Finding** — a security issue (CVE or leaked secret) with severity, location, remediation.
+- **RED metrics** — Rate, Errors, Duration.
+- **RPO / RTO** — Recovery Point / Time Objective.
+- **SSE** — Server-Sent Events (one-way streaming).
+
+---
+
+## Appendix A — Key Sequence Flows
+
+**Analysis pipeline**
+
+```mermaid
+sequenceDiagram
+  actor U as User
+  participant W as Web
+  participant API
+  participant Q as Queue
+  participant WK as Analysis Worker
+  participant GH as GitHub
+  participant SC as Scanners
+  U->>W: Run analysis
+  W->>API: POST /projects/:id/analyses
+  API->>Q: enqueue job
+  API-->>W: { analysisId }
+  W->>API: GET /analyses/:id/events (SSE)
+  WK->>GH: shallow clone (ephemeral)
+  WK->>WK: detect stack · map deps
+  WK->>SC: Trivy + gitleaks
+  WK->>WK: score readiness · generate assets · estimate cost
+  WK-->>API: step progress (per step)
+  API-->>W: SSE step events
+  WK->>WK: destroy sandbox (no source persisted)
+  WK-->>API: done
+  API-->>W: analysis complete
+```
+
+**Streamed deploy**
+
+```mermaid
+sequenceDiagram
+  actor U as User
+  participant W as Web
+  participant API
+  participant DR as Deploy Runner
+  participant K as Cluster (EKS/GKE/AKS)
+  U->>W: Deploy (target, env)
+  W->>API: POST /projects/:id/deployments
+  API->>DR: start deploy
+  API-->>W: { deploymentId }
+  W->>API: GET /deployments/:id/logs (SSE/WS)
+  DR->>K: authenticate
+  DR->>K: apply manifests
+  DR->>K: watch rollout · readiness probes
+  DR-->>API: log lines (auth→apply→rollout→readiness→done)
+  API-->>W: streamed logs
+  alt readiness fails
+    DR->>K: rollback
+    DR-->>API: rolled_back
+  else success
+    DR-->>API: succeeded (+ url)
+  end
+```
 
 ---
 
