@@ -13,17 +13,20 @@ Current state: **front-end prototype only** (Claude Design export). No backend y
 
 ## Layout
 
-- `apps/web/DevPilot AI.dc.html` — clickable prototype. 16 screens, dark + light. Design source of truth.
-- `apps/web/support.js` — **GENERATED** dc-runtime (React-based interpreter). Vendored. **Do NOT edit or split** — rebuilt from `dc-runtime/src/*.ts`, not present here.
+- `apps/web/` — **production front-end**: Next.js (App Router) + TypeScript + Tailwind. See ADR-001.
+- `apps/prototype/DevPilot AI.dc.html` — clickable prototype. 16 screens, dark + light. **Design source of truth** (reference only).
+- `apps/prototype/support.js` — **GENERATED** dc-runtime (React-based interpreter). Vendored. **Do NOT edit or split** — rebuilt from `dc-runtime/src/*.ts`, not present here.
 - `docs/DevPilot_AI_Full_Project_Plan.md` — the SDD (source of truth for scope/architecture).
+- `docs/architecture/adr-001-frontend-architecture.md` — front-end stack decision.
 - `docs/handoff/BACKEND_HANDOFF.md` — data models, API surface, jobs (original handoff).
-- `docs/design/DESIGN_TOKENS.md` — colors, fonts, radii, shadows.
+- `docs/design/DESIGN_TOKENS.md` — colors, fonts, radii, shadows (drive `apps/web/app/globals.css`).
 
 ## Hard rules
 
 - Preserve the prototype's visual design exactly (colors, spacing, type, motion, copy). Do not redesign.
 - `apps/web/support.js` is generated build output — never hand-edit.
-- The `.dc.html` + `support.js` must stay in the same directory (`./support.js` is a relative ref); renaming the `.dc.html` changes the dc root-component name.
+- In `apps/prototype/`, the `.dc.html` + `support.js` must stay in the same directory (`./support.js` is a relative ref); renaming the `.dc.html` changes the dc root-component name.
+- Design tokens live in `apps/web/app/globals.css` (CSS vars) mapped in `tailwind.config.ts`. Use token classes (`bg-surface`, `text-accent-2`), not ad-hoc hex or inline styles.
 - Never commit directly to `main`. Branches: `main`, `develop`, then `feature/*`. Conventional Commits.
 - Do NOT add `Co-Authored-By: Claude ...` or `Claude-Session:` trailers to commit messages or PR bodies. No Claude attribution as collaborator.
 - No source persistence of user repos (shallow clone in ephemeral sandbox) — see handoff security section.
