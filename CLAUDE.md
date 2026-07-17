@@ -25,6 +25,7 @@ Current state: **front-end prototype only** (Claude Design export). No backend y
 - `apps/web/support.js` is generated build output — never hand-edit.
 - The `.dc.html` + `support.js` must stay in the same directory (`./support.js` is a relative ref); renaming the `.dc.html` changes the dc root-component name.
 - Never commit directly to `main`. Branches: `main`, `develop`, then `feature/*`. Conventional Commits.
+- Do NOT add `Co-Authored-By: Claude ...` or `Claude-Session:` trailers to commit messages or PR bodies. No Claude attribution as collaborator.
 - No source persistence of user repos (shallow clone in ephemeral sandbox) — see handoff security section.
 
 ## Skills — use every session
