@@ -38,14 +38,19 @@ Full detail in the [Software Design Document](docs/DevPilot_AI_Full_Project_Plan
 ```
 DevPilot-AI/
 ├── apps/
-│   └── web/                     # front-end
-│       ├── DevPilot AI.dc.html  # clickable prototype (design source of truth)
+│   ├── web/                     # production front-end — Next.js + TS + Tailwind
+│   │   ├── app/                 # App Router: (app) shell + routes, landing, connect
+│   │   ├── components/          # app-shell (Sidebar/Topbar) + ui primitives
+│   │   ├── lib/                 # nav config, helpers
+│   │   └── tailwind.config.ts   # design tokens mapped from globals.css
+│   └── prototype/               # clickable design reference (do not ship)
+│       ├── DevPilot AI.dc.html  # prototype (design source of truth)
 │       └── support.js           # generated dc-runtime (vendored — do not edit)
 ├── docs/
 │   ├── DevPilot_AI_Full_Project_Plan.md   # the SDD
 │   ├── handoff/BACKEND_HANDOFF.md         # data models, API surface, jobs
 │   ├── design/DESIGN_TOKENS.md            # colors, fonts, radii, motion
-│   └── architecture/                      # diagrams, ADRs (as added)
+│   └── architecture/adr-001-*.md          # decisions (ADRs)
 ├── .github/workflows/           # CI/CD (as added)
 ├── CLAUDE.md                    # Claude Code project memory
 ├── CONTRIBUTING.md · SECURITY.md · CODE_OF_CONDUCT.md · CHANGELOG.md
@@ -56,12 +61,16 @@ DevPilot-AI/
 
 ## Getting started
 
-Requirements: a modern browser (prototype). Node.js / the chosen backend stack come once
-architecture is picked.
+Requirements: Node.js 20+ for the web app; a modern browser for the prototype.
 
 ```bash
-# View the prototype
+# Production front-end (Next.js)
 cd apps/web
+npm install
+npm run dev        # http://localhost:3000
+
+# View the original design prototype
+cd apps/prototype
 npx serve .        # open the printed URL, load "DevPilot AI.dc.html"
 ```
 
