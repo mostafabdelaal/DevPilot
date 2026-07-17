@@ -28,6 +28,10 @@ const config: Config = {
         green: "var(--green)",
         amber: "var(--amber)",
         red: "var(--red)",
+        "green-soft": "var(--green-soft)",
+        "amber-soft": "var(--amber-soft)",
+        "red-soft": "var(--red-soft)",
+        "accent-border": "var(--accent-border)",
       },
       fontFamily: {
         sans: ["var(--font-geist)", "system-ui", "sans-serif"],

@@ -23,6 +23,10 @@
   --green: #3ecf8e;
   --amber: #f5b445;
   --red: #f16a6a;
+  --green-soft: rgba(62, 207, 142, 0.15);
+  --amber-soft: rgba(245, 180, 69, 0.15);
+  --red-soft: rgba(241, 106, 106, 0.15);
+  --accent-border: rgba(124, 108, 255, 0.3);
 }
 
 :root[data-theme="light"] {
@@ -41,6 +45,10 @@
   --green: #1fae74;
   --amber: #cf9020;
   --red: #db4f4f;
+  --green-soft: rgba(31, 174, 116, 0.13);
+  --amber-soft: rgba(207, 144, 32, 0.14);
+  --red-soft: rgba(219, 79, 79, 0.13);
+  --accent-border: rgba(106, 92, 255, 0.28);
 }
 
 * {
