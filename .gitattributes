@@ -1,0 +1,27 @@
+# Normalize line endings
+* text=auto eol=lf
+
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.ts   text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+
+# Windows scripts keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.woff  binary
+*.woff2 binary
+
+# Generated / vendored — exclude from language stats & diffs
+apps/web/support.js linguist-vendored linguist-generated -diff

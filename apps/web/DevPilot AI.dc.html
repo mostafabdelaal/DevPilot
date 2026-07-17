@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#0a0a0c}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{color:var(--accent-2)}
+  ::selection{background:var(--accent-soft);color:var(--text)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;border:2px solid transparent;background-clip:content-box}
+  ::-webkit-scrollbar-track{background:transparent}
+  @keyframes dp-spin{to{transform:rotate(360deg)}}
+  @keyframes dp-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes dp-blink{0%,100%{opacity:1}50%{opacity:0}}
+  @keyframes dp-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes dp-scan{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+  @keyframes dp-ring{from{stroke-dashoffset:214}}
+  @keyframes dp-glow{0%,100%{opacity:.4}50%{opacity:.9}}
+  @media (max-width:900px){
+    [data-shell]{grid-template-columns:1fr!important}
+    [data-sidebar]{position:fixed!important;top:0;left:0;height:100vh!important;width:250px;z-index:70;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);box-shadow:0 24px 70px rgba(0,0,0,.55)}
+    [data-navopen="true"] [data-sidebar]{transform:none}
+    [data-navopen="true"] [data-scrim]{display:block!important}
+    [data-mtoggle]{display:grid!important}
+    [data-hidesm]{display:none!important}
+    [data-docgrid]{grid-template-columns:1fr!important}
+  }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="--bg:#0a0a0c;--bg-elev:#0e0e12;--surface:#141419;--surface-2:#1b1b22;--border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.13);--text:#f4f4f7;--text-2:#a2a2ae;--text-3:#6a6a76;--accent:#7c6cff;--accent-2:#33d6c8;--accent-soft:rgba(124,108,255,.15);--green:#3ecf8e;--amber:#f5b445;--red:#f16a6a;--shadow:0 12px 40px rgba(0,0,0,.5);min-height:100vh;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5">
+
+<!-- ============ MARKETING / AUTH ============ -->
+<sc-if value="{{ isMarketing }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh;position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;background:radial-gradient(900px 500px at 78% -8%,rgba(124,108,255,.20),transparent 60%),radial-gradient(700px 480px at 8% 12%,rgba(51,214,200,.10),transparent 55%);pointer-events:none"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 20%,black,transparent 75%);opacity:.5;pointer-events:none"></div>
+
+  <!-- marketing nav -->
+  <header style="position:relative;max-width:1180px;margin:0 auto;padding:22px 28px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;box-shadow:0 6px 18px rgba(124,108,255,.4)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5L16 9" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span style="font-weight:700;font-size:15.5px;letter-spacing:-.02em">DevPilot<span style="color:var(--text-3);font-weight:500"> AI</span></span>
+    </div>
+    <nav style="display:flex;align-items:center;gap:26px">
+      <span style="color:var(--text-2);font-size:13.5px;cursor:pointer">Product</span>
+      <span style="color:var(--text-2);font-size:13.5px;cursor:pointer">Docs</span>
+      <span style="color:var(--text-2);font-size:13.5px;cursor:pointer">Pricing</span>
+      <button onClick="{{ goConnect }}" style="background:var(--text);color:var(--bg);border:0;padding:9px 16px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer">Sign in</button>
+    </nav>
+  </header>
+
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+  <main style="position:relative;max-width:1000px;margin:0 auto;padding:60px 28px 90px;text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border:1px solid var(--border-strong);border-radius:999px;background:var(--surface);font-size:12.5px;color:var(--text-2);margin-bottom:26px">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)"></span>
+      Now generating Terraform, Helm & OpenTelemetry stacks
+    </div>
+    <h1 style="font-size:60px;line-height:1.03;letter-spacing:-.035em;font-weight:700;margin:0 0 22px;text-wrap:balance">Your AI DevOps engineer,<br>working beside you.</h1>
+    <p style="font-size:19px;color:var(--text-2);max-width:640px;margin:0 auto 38px;text-wrap:pretty">DevPilot AI reads any GitHub repository and ships a production-ready deployment package — Dockerfiles, Kubernetes, Terraform, CI/CD, monitoring and security — in minutes, not days.</p>
+    <form onSubmit="{{ submitRepo }}" style="max-width:560px;margin:0 auto 16px;display:flex;gap:10px;background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--text-3)" style="align-self:center;flex:none"><path d="M12 2C6.5 2 2 6.6 2 12.3c0 4.5 2.9 8.3 6.8 9.7.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5.1 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9 9 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 4-2.4 4.8-4.7 5.1.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 3.9-1.4 6.8-5.2 6.8-9.7C22 6.6 17.5 2 12 2Z"/></svg>
+      <input value="{{ repoUrl }}" onInput="{{ setRepo }}" placeholder="github.com/your-org/your-repo" style="flex:1;background:transparent;border:0;color:var(--text);font-family:inherit;font-size:15px;outline:none"/>
+      <button type="submit" style="background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;padding:11px 20px;border-radius:9px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;box-shadow:0 6px 18px rgba(124,108,255,.4)">Analyze repo →</button>
+    </form>
+    <div style="font-size:12.5px;color:var(--text-3);margin-bottom:64px">No credit card · Read-only access · SOC 2 Type II</div>
+
+    <!-- product preview -->
+    <div style="position:relative;border:1px solid var(--border-strong);border-radius:16px;overflow:hidden;background:var(--bg-elev);box-shadow:0 30px 80px rgba(0,0,0,.55)">
+      <div style="display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface)">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ff5f57"></span><span style="width:11px;height:11px;border-radius:50%;background:#febc2e"></span><span style="width:11px;height:11px;border-radius:50%;background:#28c840"></span>
+        <span style="margin-left:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-3)">devpilot.ai/orbit-api/analysis</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);text-align:left">
+        <div style="background:var(--bg-elev);padding:22px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);margin-bottom:14px">Live analysis</div>
+          <sc-for list="{{ previewSteps }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:11px;padding:7px 0">
+              <span style="width:18px;height:18px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;flex:none"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 7" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span style="font-size:13px;color:var(--text-2)">{{ s }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#0b0b0f;padding:20px 22px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:#c9c9d4">
+          <div style="color:var(--text-3)"># Dockerfile · generated</div>
+          <div><span style="color:var(--accent-2)">FROM</span> golang:1.22-alpine <span style="color:var(--accent-2)">AS</span> build</div>
+          <div><span style="color:var(--accent-2)">WORKDIR</span> /src</div>
+          <div><span style="color:var(--accent-2)">RUN</span> go mod download</div>
+          <div><span style="color:var(--accent-2)">FROM</span> distroless/static</div>
+          <div><span style="color:var(--accent-2)">USER</span> nonroot:nonroot</div>
+          <div><span style="color:var(--accent-2)">ENTRYPOINT</span> ["/app/orbit"]<span style="animation:dp-blink 1s steps(1) infinite;color:var(--accent)">▍</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:44px;flex-wrap:wrap;margin-top:56px;color:var(--text-3);font-size:13px">
+      <span>Trusted by teams at</span>
+      <span style="color:var(--text-2);font-weight:600">Northwind</span>
+      <span style="color:var(--text-2);font-weight:600">Helios</span>
+      <span style="color:var(--text-2);font-weight:600">Quanta</span>
+      <span style="color:var(--text-2);font-weight:600">Ledgerbase</span>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- CONNECT GITHUB -->
+  <sc-if value="{{ isConnect }}" hint-placeholder-val="{{ true }}">
+  <main style="position:relative;max-width:460px;margin:0 auto;padding:52px 28px 90px">
+    <div style="background:var(--surface);border:1px solid var(--border-strong);border-radius:18px;padding:34px;box-shadow:var(--shadow);animation:dp-up .4s ease both">
+      <div style="width:52px;height:52px;border-radius:14px;background:#161620;border:1px solid var(--border-strong);display:grid;place-items:center;margin-bottom:20px">
+        <svg width="27" height="27" viewBox="0 0 24 24" fill="var(--text)"><path d="M12 2C6.5 2 2 6.6 2 12.3c0 4.5 2.9 8.3 6.8 9.7.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5.1 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9 9 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 4-2.4 4.8-4.7 5.1.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 3.9-1.4 6.8-5.2 6.8-9.7C22 6.6 17.5 2 12 2Z"/></svg>
+      </div>
+      <h2 style="font-size:23px;letter-spacing:-.02em;margin:0 0 8px">Connect your GitHub</h2>
+      <p style="color:var(--text-2);font-size:14px;margin:0 0 24px">DevPilot needs read-only access to analyze repositories and open pull requests for generated assets.</p>
+      <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:24px">
+        <sc-for list="{{ scopes }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.45;color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex:none;margin-top:2px"><path d="m5 12 4 4L19 7" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>{{ p }}</span></div>
+        </sc-for>
+      </div>
+      <button onClick="{{ goDashboard }}" style="width:100%;background:var(--text);color:var(--bg);border:0;padding:13px;border-radius:11px;font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px">Authorize DevPilot AI</button>
+      <button onClick="{{ goDashboard }}" style="width:100%;margin-top:10px;background:transparent;color:var(--text-2);border:1px solid var(--border-strong);padding:12px;border-radius:11px;font-family:inherit;font-weight:500;font-size:13.5px;cursor:pointer">Continue with a public repo URL</button>
+      <div style="text-align:center;margin-top:18px;font-size:12px;color:var(--text-3)">Read-only · revoke anytime · we never store your source</div>
+    </div>
+  </main>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ APP SHELL ============ -->
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+<div data-shell data-navopen="{{ mobileNav }}" style="display:grid;grid-template-columns:248px 1fr;min-height:100vh">
+
+  <div data-scrim onClick="{{ closeMobileNav }}" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60"></div>
+
+  <!-- SIDEBAR -->
+  <aside data-sidebar style="background:var(--bg-elev);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <div style="padding:17px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;flex:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5L16 9" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span style="font-weight:700;font-size:14.5px;letter-spacing:-.02em">DevPilot<span style="color:var(--text-3);font-weight:500"> AI</span></span>
+    </div>
+
+    <!-- project switcher -->
+    <div style="padding:12px 14px">
+      <button style="width:100%;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 11px;cursor:pointer;font-family:inherit;color:var(--text)">
+        <span style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#f16a6a,#f5b445);display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;flex:none">O</span>
+        <span style="text-align:left;flex:1;overflow:hidden"><span style="display:block;font-size:12.5px;font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden">orbit-api</span><span style="display:block;font-size:11px;color:var(--text-3)">acme-labs</span></span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m7 9 5 5 5-5M7 15l5-5 5 5" stroke="var(--text-3)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" transform="scale(0.7) translate(5 5)"/><path d="m8 10 4-4 4 4M8 14l4 4 4-4" stroke="var(--text-3)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <nav style="flex:1;overflow-y:auto;padding:4px 10px 14px">
+      <sc-for list="{{ nav }}" as="sec" hint-placeholder-count="4">
+        <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);padding:14px 10px 6px">{{ sec.group }}</div>
+        <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="3">
+          <button onClick="{{ it.onClick }}" style="{{ it.style }}">
+            <span style="width:17px;height:17px;flex:none;display:grid;place-items:center" dangerouslySetInnerHTML="{{ it.icon }}"></span>
+            <span style="flex:1;text-align:left">{{ it.label }}</span>
+            <sc-if value="{{ it.badge }}" hint-placeholder-val="{{ true }}"><span style="{{ it.badgeStyle }}">{{ it.badge }}</span></sc-if>
+          </button>
+        </sc-for>
+      </sc-for>
+    </nav>
+
+    <div style="padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px">
+      <span style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;flex:none">DR</span>
+      <span style="flex:1;overflow:hidden"><span style="display:block;font-size:12.5px;font-weight:600">Dana Reyes</span><span style="display:block;font-size:11px;color:var(--text-3)">Platform team</span></span>
+      <button onClick="{{ toggleTheme }}" title="Toggle theme" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;color:var(--text-2)" dangerouslySetInnerHTML="{{ themeIcon }}"></button>
+    </div>
+  </aside>
+
+  <!-- MAIN COLUMN -->
+  <div style="display:flex;flex-direction:column;min-width:0">
+    <!-- TOPBAR -->
+    <header style="height:58px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--bg-elev) 80%,transparent);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;padding:0 22px">
+      <button data-mtoggle onClick="{{ toggleMobileNav }}" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:9px;width:34px;height:34px;place-items:center;cursor:pointer;color:var(--text-2);flex:none">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-3)">
+        <span>orbit-api</span><span>/</span><span style="color:var(--text);font-weight:500">{{ pageTitle }}</span>
+      </div>
+      <div style="flex:1"></div>
+      <button data-hidesm onClick="{{ openCmd }}" style="display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:7px 11px;cursor:pointer;color:var(--text-3);font-family:inherit;font-size:12.5px;min-width:200px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span style="flex:1;text-align:left">Search or ask…</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);border-radius:5px;padding:1px 5px">⌘K</span>
+      </button>
+      <button onClick="{{ goNotifications }}" title="Notifications" style="position:relative;background:var(--surface);border:1px solid var(--border);border-radius:9px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;color:var(--text-2)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span style="position:absolute;top:7px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg-elev)"></span>
+      </button>
+      <button onClick="{{ goAnalysis }}" style="background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;padding:8px 15px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(124,108,255,.35)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>New analysis
+      </button>
+    </header>
+
+    <main style="flex:1;overflow-y:auto;background:var(--bg)">
+
+      <!-- ===== DASHBOARD ===== -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px">
+          <div>
+            <h1 style="font-size:26px;letter-spacing:-.025em;margin:0 0 5px">Good afternoon, Dana</h1>
+            <p style="color:var(--text-2);margin:0;font-size:14px">orbit-api was last analyzed 4 hours ago · <span style="color:var(--green)">healthy</span></p>
+          </div>
+          <button onClick="{{ goGenerator }}" style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text);padding:9px 15px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer">View generated assets</button>
+        </div>
+
+        <!-- score gauges -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">
+          <sc-for list="{{ scores }}" as="g" hint-placeholder-count="4">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:18px 20px;display:flex;align-items:center;gap:16px">
+              <div style="position:relative;width:74px;height:74px;flex:none">
+                <svg width="74" height="74" viewBox="0 0 74 74" style="transform:rotate(-90deg)">
+                  <circle cx="37" cy="37" r="31" fill="none" stroke="var(--border-strong)" stroke-width="6"/>
+                  <circle cx="37" cy="37" r="31" fill="none" stroke="{{ g.color }}" stroke-width="6" stroke-linecap="round" stroke-dasharray="195" stroke-dashoffset="{{ g.offset }}" style="transition:stroke-dashoffset 1s ease"/>
+                </svg>
+                <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:19px;font-weight:700">{{ g.value }}</div>
+              </div>
+              <div>
+                <div style="font-size:12.5px;color:var(--text-2);margin-bottom:3px">{{ g.label }}</div>
+                <div style="font-size:12px;color:{{ g.color }};font-weight:600">{{ g.tag }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px">
+          <!-- generated assets -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h3 style="font-size:15px;margin:0">Generated assets</h3>
+              <span style="font-size:12px;color:var(--text-3)">11 files · 2.4 MB</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <sc-for list="{{ assetCards }}" as="a" hint-placeholder-count="6">
+                <button onClick="{{ a.onClick }}" style="display:flex;align-items:center;gap:11px;background:var(--bg-elev);border:1px solid var(--border);border-radius:11px;padding:12px 13px;cursor:pointer;text-align:left;font-family:inherit">
+                  <span style="width:32px;height:32px;border-radius:8px;background:{{ a.tint }};display:grid;place-items:center;flex:none;color:{{ a.fg }}" dangerouslySetInnerHTML="{{ a.icon }}"></span>
+                  <span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:600;color:var(--text)">{{ a.title }}</span><span style="display:block;font-size:11.5px;color:var(--text-3)">{{ a.sub }}</span></span>
+                  <span style="width:7px;height:7px;border-radius:50%;background:var(--green);flex:none"></span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- cost -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <h3 style="font-size:15px;margin:0">Est. cloud cost</h3>
+              <button onClick="{{ goCost }}" style="font-size:12px;color:var(--accent);background:none;border:0;cursor:pointer;font-family:inherit">Details</button>
+            </div>
+            <div style="font-size:32px;font-weight:700;letter-spacing:-.02em">$412<span style="font-size:15px;color:var(--text-3);font-weight:500">/mo</span></div>
+            <div style="font-size:12px;color:var(--green);margin-bottom:16px">↓ 18% vs. current setup</div>
+            <div style="display:flex;align-items:flex-end;gap:6px;height:74px">
+              <sc-for list="{{ costBars }}" as="b" hint-placeholder-count="6">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px">
+                  <div style="width:100%;height:{{ b.h }}px;background:{{ b.fill }};border-radius:5px 5px 0 0"></div>
+                  <span style="font-size:9.5px;color:var(--text-3)">{{ b.m }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <!-- recommendations -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:15px">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3v2m0 14v2M5 5l1.5 1.5M17.5 17.5 19 19M3 12h2m14 0h2M5 19l1.5-1.5M17.5 6.5 19 5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="var(--accent)" stroke-width="1.6"/></svg>
+              <h3 style="font-size:15px;margin:0">AI recommendations</h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <sc-for list="{{ recs }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;gap:11px;padding:11px 12px;background:var(--bg-elev);border:1px solid var(--border);border-radius:11px">
+                  <span style="{{ r.dotStyle }}"></span>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">{{ r.title }}</div><div style="font-size:12px;color:var(--text-2)">{{ r.body }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <!-- activity -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+            <h3 style="font-size:15px;margin:0 0 15px">Recent activity</h3>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ activity }}" as="e" hint-placeholder-count="4">
+                <div style="display:flex;gap:12px;padding-bottom:15px">
+                  <div style="display:flex;flex-direction:column;align-items:center"><span style="width:9px;height:9px;border-radius:50%;background:{{ e.color }};margin-top:4px;flex:none"></span><span style="flex:1;width:1.5px;background:var(--border)"></span></div>
+                  <div style="flex:1;padding-bottom:2px"><div style="font-size:13px;color:var(--text)">{{ e.text }}</div><div style="font-size:11.5px;color:var(--text-3);margin-top:2px">{{ e.time }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== ANALYSIS ===== -->
+      <sc-if value="{{ isAnalysis }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--text)"><path d="M12 2C6.5 2 2 6.6 2 12.3c0 4.5 2.9 8.3 6.8 9.7.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5.1 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9 9 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 4-2.4 4.8-4.7 5.1.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 3.9-1.4 6.8-5.2 6.8-9.7C22 6.6 17.5 2 12 2Z"/></svg>
+              <h1 style="font-size:24px;letter-spacing:-.02em;margin:0">acme-labs/orbit-api</h1>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);border:1px solid var(--border);border-radius:6px;padding:2px 7px">main</span>
+            </div>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">Go order-fulfilment service · 38 modules · 214 files</p>
+          </div>
+          <button onClick="{{ restartAnalysis }}" style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text);padding:9px 15px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Re-run
+          </button>
+        </div>
+
+        <!-- progress bar -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px"><span style="color:var(--text-2)">{{ analysisStatus }}</span><span style="color:var(--text-3);font-family:'JetBrains Mono',monospace">{{ analysisPct }}%</span></div>
+            <div style="height:6px;background:var(--border-strong);border-radius:4px;overflow:hidden"><div style="height:100%;width:{{ analysisPct }}%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:4px;transition:width .5s ease"></div></div>
+          </div>
+          <sc-if value="{{ analysisDone }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ goGenerator }}" style="background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;padding:10px 17px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">View 11 generated files →</button>
+          </sc-if>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px">
+          <!-- timeline -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:22px 24px">
+            <h3 style="font-size:14px;margin:0 0 18px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-size:11px">Analysis timeline</h3>
+            <sc-for list="{{ timeline }}" as="s" hint-placeholder-count="6">
+              <div style="display:flex;gap:14px">
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <span style="{{ s.dot }}" dangerouslySetInnerHTML="{{ s.dotInner }}"></span>
+                  <span style="flex:1;width:2px;background:{{ s.line }};min-height:14px"></span>
+                </div>
+                <div style="flex:1;padding-bottom:20px;opacity:{{ s.op }};transition:opacity .4s">
+                  <div style="font-size:14px;font-weight:600;color:{{ s.titleColor }}">{{ s.title }}</div>
+                  <div style="font-size:12.5px;color:var(--text-2);margin-top:3px">{{ s.detail }}</div>
+                  <sc-if value="{{ s.showMeta }}" hint-placeholder-val="{{ true }}"><span style="{{ s.metaStyle }}">{{ s.meta }}</span></sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- detection panels -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+              <h3 style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin:0 0 14px">Detected stack</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:9px">
+                <sc-for list="{{ stack }}" as="t" hint-placeholder-count="6">
+                  <span style="display:flex;align-items:center;gap:7px;background:var(--bg-elev);border:1px solid var(--border);border-radius:9px;padding:7px 11px;font-size:12.5px"><span style="width:8px;height:8px;border-radius:2px;background:{{ t.c }}"></span>{{ t.name }}<span style="color:var(--text-3)">{{ t.v }}</span></span>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+              <h3 style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin:0 0 4px">AI architecture summary</h3>
+              <div style="display:flex;flex-direction:column;gap:11px;margin-top:12px">
+                <p style="margin:0;font-size:13px;color:var(--text-2);line-height:1.65">orbit-api is a stateless Go service exposing a REST + gRPC API for order fulfilment. It reads and writes to a single Postgres primary, caches hot inventory in Redis, and publishes events to an internal NATS stream.</p>
+                <p style="margin:0;font-size:13px;color:var(--text-2);line-height:1.65">The service is <span style="color:var(--text)">horizontally scalable</span> and cloud-ready with only two blockers: hard-coded connection strings and a missing readiness probe. Both are fixed in the generated manifests.</p>
+                <button onClick="{{ goAssistant }}" style="align-self:flex-start;margin-top:2px;background:var(--accent-soft);color:var(--accent);border:1px solid rgba(124,108,255,.3);padding:8px 13px;border-radius:9px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer">Ask the assistant about this →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== GENERATOR ===== -->
+      <sc-if value="{{ isGenerator }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:270px 1fr;height:calc(100vh - 58px)">
+        <!-- file list -->
+        <div style="border-right:1px solid var(--border);background:var(--bg-elev);overflow-y:auto;padding:16px 12px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);padding:6px 8px 10px">Generated package</div>
+          <sc-for list="{{ genFiles }}" as="f" hint-placeholder-count="6">
+            <button onClick="{{ f.onClick }}" style="{{ f.style }}">
+              <span style="width:26px;height:26px;border-radius:7px;background:{{ f.tint }};display:grid;place-items:center;flex:none;color:{{ f.fg }}" dangerouslySetInnerHTML="{{ f.icon }}"></span>
+              <span style="flex:1;min-width:0;text-align:left"><span style="display:block;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.name }}</span><span style="display:block;font-size:11px;color:var(--text-3)">{{ f.size }}</span></span>
+            </button>
+          </sc-for>
+          <button onClick="{{ downloadAll }}" style="width:100%;margin-top:14px;background:var(--text);color:var(--bg);border:0;padding:11px;border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Download all (.zip)
+          </button>
+        </div>
+        <!-- code viewer -->
+        <div style="display:flex;flex-direction:column;min-width:0;background:#0b0b0f">
+          <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg-elev)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600">{{ activeFile.name }}</span>
+            <span style="font-size:11.5px;color:var(--text-3)">{{ activeFile.desc }}</span>
+            <div style="flex:1"></div>
+            <span style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--green)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 7" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Validated</span>
+            <button style="background:var(--surface);border:1px solid var(--border);color:var(--text-2);width:30px;height:30px;border-radius:8px;display:grid;place-items:center;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.7"/></svg></button>
+          </div>
+          <div style="flex:1;overflow:auto;padding:16px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75">
+            <sc-for list="{{ activeFile.lines }}" as="ln" hint-placeholder-count="18">
+              <div style="display:flex;padding:0 20px"><span style="width:34px;color:var(--text-3);opacity:.6;user-select:none;text-align:right;padding-right:16px;flex:none">{{ ln.n }}</span><span style="color:{{ ln.color }};white-space:pre">{{ ln.t }}</span></div>
+            </sc-for>
+          </div>
+          <div style="border-top:1px solid var(--border);background:var(--bg-elev);padding:12px 20px;display:flex;align-items:center;gap:12px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3v2m0 14v2M5 5l1.5 1.5M17.5 17.5 19 19M3 12h2m14 0h2M5 19l1.5-1.5M17.5 6.5 19 5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="var(--accent)" stroke-width="1.5"/></svg>
+            <span style="font-size:12.5px;color:var(--text-2)">{{ activeFile.note }}</span>
+            <div style="flex:1"></div>
+            <button onClick="{{ goAssistant }}" style="background:var(--accent-soft);color:var(--accent);border:1px solid rgba(124,108,255,.3);padding:7px 12px;border-radius:8px;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer">Explain this file</button>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== ASSISTANT ===== -->
+      <sc-if value="{{ isAssistant }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;height:calc(100vh - 58px)">
+        <div style="flex:1;overflow-y:auto;padding:28px 0">
+          <div style="max-width:760px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:22px">
+            <sc-for list="{{ chat }}" as="m" hint-placeholder-count="2">
+              <div style="{{ m.wrap }}">
+                <sc-if value="{{ m.isAi }}" hint-placeholder-val="{{ true }}">
+                  <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;flex:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+                </sc-if>
+                <div style="{{ m.bubble }}" dangerouslySetInnerHTML="{{ m.html }}"></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <!-- suggestions + input -->
+        <div style="border-top:1px solid var(--border);background:var(--bg-elev);padding:16px 0 20px">
+          <div style="max-width:760px;margin:0 auto;padding:0 24px">
+            <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px">
+              <sc-for list="{{ suggestions }}" as="q" hint-placeholder-count="3">
+                <button onClick="{{ q.onClick }}" style="background:var(--surface);border:1px solid var(--border);color:var(--text-2);padding:7px 12px;border-radius:9px;font-family:inherit;font-size:12.5px;cursor:pointer">{{ q.label }}</button>
+              </sc-for>
+            </div>
+            <form onSubmit="{{ sendChat }}" style="display:flex;gap:10px;align-items:flex-end;background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:10px 10px 10px 16px">
+              <input value="{{ chatInput }}" onInput="{{ setChatInput }}" placeholder="Ask about the architecture, infra, security…" style="flex:1;background:transparent;border:0;color:var(--text);font-family:inherit;font-size:14.5px;outline:none;padding:6px 0"/>
+              <button type="submit" style="background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;width:38px;height:38px;border-radius:10px;cursor:pointer;display:grid;place-items:center;flex:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m0 0-5-5m5 5-5 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </form>
+            <div style="text-align:center;font-size:11px;color:var(--text-3);margin-top:9px">DevPilot has full context of orbit-api and its generated assets</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== SECURITY ===== -->
+      <sc-if value="{{ isSecurity }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Security</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">Trivy + gitleaks + SCA · last scan 4 hours ago · orbit-api @ main</p>
+          </div>
+          <button onClick="{{ goAssistant }}" style="background:var(--accent-soft);color:var(--accent);border:1px solid rgba(124,108,255,.3);padding:9px 15px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer">Ask AI to fix these</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px">
+          <!-- posture score + donut -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+            <div style="position:relative;width:132px;height:132px">
+              <svg width="132" height="132" viewBox="0 0 132 132" style="transform:rotate(-90deg)">
+                <circle cx="66" cy="66" r="54" fill="none" stroke="var(--border-strong)" stroke-width="12"/>
+                <sc-for list="{{ sevArcs }}" as="a" hint-placeholder-count="3">
+                  <circle cx="66" cy="66" r="54" fill="none" stroke="{{ a.color }}" stroke-width="12" stroke-dasharray="{{ a.dash }}" stroke-dashoffset="{{ a.offset }}"/>
+                </sc-for>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:32px;font-weight:700">78</span><span style="font-size:11px;color:var(--text-3)">/ 100</span></div>
+            </div>
+            <div style="font-size:13px;color:var(--amber);font-weight:600">Needs review</div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+              <sc-for list="{{ sevLegend }}" as="s" hint-placeholder-count="4">
+                <span style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-2)"><span style="width:8px;height:8px;border-radius:2px;background:{{ s.color }}"></span>{{ s.label }} {{ s.n }}</span>
+              </sc-for>
+            </div>
+          </div>
+          <!-- summary stats -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+            <sc-for list="{{ secStats }}" as="s" hint-placeholder-count="6">
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:18px 20px">
+                <div style="font-size:12px;color:var(--text-3);margin-bottom:8px">{{ s.label }}</div>
+                <div style="font-size:26px;font-weight:700;color:{{ s.color }};letter-spacing:-.02em">{{ s.value }}</div>
+                <div style="font-size:11.5px;color:var(--text-2);margin-top:4px">{{ s.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- vulnerability table -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:14px;margin:0">Vulnerabilities</h3>
+            <div style="display:flex;gap:7px">
+              <sc-for list="{{ sevFilters }}" as="f" hint-placeholder-count="4">
+                <span style="{{ f.style }}">{{ f.label }}</span>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:110px 1fr 150px 120px 90px;padding:10px 20px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border)">
+            <span>Severity</span><span>Advisory</span><span>Package</span><span>Fixed in</span><span></span>
+          </div>
+          <sc-for list="{{ vulns }}" as="v" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:110px 1fr 150px 120px 90px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)">
+              <span><span style="{{ v.badge }}">{{ v.sev }}</span></span>
+              <div style="min-width:0"><div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text);font-weight:600">{{ v.cve }}</div><div style="font-size:12px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.title }}</div></div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)">{{ v.pkg }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green)">{{ v.fix }}</span>
+              <span style="font-size:11.5px;color:{{ v.statusColor }};font-weight:600">{{ v.status }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- secret detection -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="2" stroke="var(--red)" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="var(--red)" stroke-width="1.7"/></svg>
+            <h3 style="font-size:14px;margin:0">Secret detection</h3>
+            <span style="font-size:11px;background:rgba(241,106,106,.16);color:var(--red);font-weight:700;padding:2px 8px;border-radius:6px">1 exposed</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;background:var(--bg-elev);border:1px solid var(--border);border-radius:11px;padding:13px 15px">
+            <span style="width:34px;height:34px;border-radius:9px;background:rgba(241,106,106,.14);display:grid;place-items:center;flex:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3h.01M10.3 3.3 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0Z" stroke="var(--red)" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+            <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">Hard-coded Postgres password</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin-top:3px">config/dev.yaml : 14 · <span style="color:var(--text-3)">POSTGRES_PASSWORD=orbit</span></div></div>
+            <span style="font-size:11.5px;color:var(--green);font-weight:600;white-space:nowrap">✓ Replaced with K8s Secret</span>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== CLOUD COST ===== -->
+      <sc-if value="{{ isCost }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Cloud cost estimate</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">Production profile · derived from the generated Terraform</p>
+          </div>
+          <div style="display:flex;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px">
+            <sc-for list="{{ providers }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.onClick }}" style="{{ p.style }}">{{ p.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px">
+          <!-- breakdown -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:22px 24px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px">
+              <h3 style="font-size:14px;margin:0">Monthly breakdown · {{ costProvider }}</h3>
+              <div><span style="font-size:30px;font-weight:700;letter-spacing:-.02em">{{ costTotal }}</span><span style="font-size:14px;color:var(--text-3)">/mo</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:15px">
+              <sc-for list="{{ costRows }}" as="c" hint-placeholder-count="5">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="display:flex;align-items:center;gap:9px"><span style="width:9px;height:9px;border-radius:3px;background:{{ c.color }}"></span>{{ c.name }}<span style="color:var(--text-3);font-size:12px">{{ c.spec }}</span></span><span style="font-family:'JetBrains Mono',monospace;color:var(--text-2)">{{ c.cost }}</span></div>
+                  <div style="height:7px;background:var(--bg-elev);border-radius:4px;overflow:hidden"><div style="height:100%;width:{{ c.pct }}%;background:{{ c.color }};border-radius:4px"></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <!-- comparison + saving -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+              <h3 style="font-size:13px;margin:0 0 16px;color:var(--text-2)">Provider comparison</h3>
+              <sc-for list="{{ compare }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                  <span style="width:52px;font-size:12.5px;font-weight:600;color:{{ p.tc }}">{{ p.label }}</span>
+                  <div style="flex:1;height:24px;background:var(--bg-elev);border-radius:6px;overflow:hidden"><div style="height:100%;width:{{ p.pct }}%;background:{{ p.fill }};border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#fff;font-weight:600">{{ p.cost }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:linear-gradient(135deg,rgba(62,207,142,.12),rgba(51,214,200,.06));border:1px solid rgba(62,207,142,.25);border-radius:15px;padding:20px 22px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3v2m0 14v2M5 5l1.5 1.5M17.5 17.5 19 19M3 12h2m14 0h2M5 19l1.5-1.5M17.5 6.5 19 5" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="var(--green)" stroke-width="1.6"/></svg><h3 style="font-size:13px;margin:0;color:var(--green)">Savings opportunity</h3></div>
+              <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">$62<span style="font-size:13px;color:var(--text-3);font-weight:500">/mo</span></div>
+              <p style="font-size:12.5px;color:var(--text-2);margin:6px 0 0;line-height:1.55">Single-AZ RDS in staging + Spot node group saves ~15%. Ask the assistant to generate a staging workspace.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12-month projection -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:22px 24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px"><h3 style="font-size:14px;margin:0">12-month projection</h3><span style="font-size:12px;color:var(--text-3)">assumes 8% monthly traffic growth</span></div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:130px">
+            <sc-for list="{{ projBars }}" as="b" hint-placeholder-count="12">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px">
+                <div style="width:100%;height:{{ b.h }}px;background:{{ b.fill }};border-radius:5px 5px 0 0;position:relative"></div>
+                <span style="font-size:9.5px;color:var(--text-3)">{{ b.m }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== ARCHITECTURE DIAGRAM ===== -->
+      <sc-if value="{{ isDiagram }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;height:calc(100vh - 58px)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 30px;border-bottom:1px solid var(--border)">
+          <div>
+            <h1 style="font-size:20px;letter-spacing:-.02em;margin:0 0 3px">Architecture diagram</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13px">Reconstructed from the generated Terraform & Kubernetes manifests</p>
+          </div>
+          <div style="display:flex;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px">
+            <sc-for list="{{ diagViews }}" as="v" hint-placeholder-count="2">
+              <button onClick="{{ v.onClick }}" style="{{ v.style }}">{{ v.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;position:relative;overflow:hidden;background:var(--bg)">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.1px,transparent 1.1px);background-size:26px 26px;opacity:.6"></div>
+          <div style="position:relative;height:100%;display:grid;place-items:center;padding:24px">
+            <svg viewBox="0 0 900 460" style="width:100%;max-width:960px;height:auto" font-family="Geist,sans-serif">
+              <defs>
+                <marker id="dpArrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="var(--text-3)"/></marker>
+              </defs>
+              <!-- VPC boundary -->
+              <rect x="150" y="70" width="720" height="360" rx="16" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="6 5"/>
+              <text x="168" y="94" fill="var(--text-3)" font-size="12" font-weight="600">AWS VPC · eu-west-1 · orbit-prod</text>
+              <!-- edges -->
+              <g stroke="var(--text-3)" stroke-width="1.6" fill="none" marker-end="url(#dpArrow)" opacity="0.8">
+                <path d="M96 250 L212 250"/>
+                <path d="M300 250 L360 250"/>
+                <path d="M548 205 L620 150"/>
+                <path d="M548 250 L620 250"/>
+                <path d="M548 295 L620 340"/>
+              </g>
+              <!-- client -->
+              <g><rect x="20" y="222" width="76" height="56" rx="11" fill="var(--surface)" stroke="var(--border-strong)"/><text x="58" y="246" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">Client</text><text x="58" y="262" text-anchor="middle" fill="var(--text-3)" font-size="10">HTTPS</text></g>
+              <!-- ALB -->
+              <g><rect x="212" y="220" width="88" height="60" rx="11" fill="var(--surface)" stroke="var(--accent-2)"/><text x="256" y="245" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">ALB</text><text x="256" y="261" text-anchor="middle" fill="var(--text-3)" font-size="10">:443 → :8080</text></g>
+              <!-- API pods -->
+              <g>
+                <rect x="360" y="196" width="188" height="108" rx="13" fill="rgba(124,108,255,.08)" stroke="var(--accent)"/>
+                <text x="454" y="218" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="700">Deployment · orbit-api ×3</text>
+                <rect x="376" y="230" width="50" height="58" rx="9" fill="var(--surface)" stroke="var(--border-strong)"/><text x="401" y="263" text-anchor="middle" fill="var(--text-2)" font-size="10">pod</text>
+                <rect x="430" y="230" width="50" height="58" rx="9" fill="var(--surface)" stroke="var(--border-strong)"/><text x="455" y="263" text-anchor="middle" fill="var(--text-2)" font-size="10">pod</text>
+                <rect x="484" y="230" width="50" height="58" rx="9" fill="var(--surface)" stroke="var(--border-strong)"/><text x="509" y="263" text-anchor="middle" fill="var(--text-2)" font-size="10">pod</text>
+              </g>
+              <!-- postgres -->
+              <g><rect x="620" y="118" width="150" height="64" rx="11" fill="var(--surface)" stroke="#5b9bd5"/><text x="695" y="145" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">RDS Postgres 16</text><text x="695" y="163" text-anchor="middle" fill="var(--text-3)" font-size="10">Multi-AZ · db.t4g.medium</text></g>
+              <!-- redis -->
+              <g><rect x="620" y="218" width="150" height="64" rx="11" fill="var(--surface)" stroke="var(--red)"/><text x="695" y="245" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">Redis 7</text><text x="695" y="263" text-anchor="middle" fill="var(--text-3)" font-size="10">ElastiCache</text></g>
+              <!-- nats -->
+              <g><rect x="620" y="318" width="150" height="64" rx="11" fill="var(--surface)" stroke="var(--green)"/><text x="695" y="345" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">NATS stream</text><text x="695" y="363" text-anchor="middle" fill="var(--text-3)" font-size="10">events</text></g>
+            </svg>
+          </div>
+          <div style="position:absolute;left:24px;bottom:20px;display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px">
+            <sc-for list="{{ diagLegend }}" as="l" hint-placeholder-count="4">
+              <span style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-2)"><span style="width:9px;height:9px;border-radius:3px;border:2px solid {{ l.color }}"></span>{{ l.label }}</span>
+            </sc-for>
+          </div>
+          <div style="position:absolute;right:24px;bottom:20px;display:flex;gap:6px">
+            <span style="width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--text-2);cursor:pointer">−</span>
+            <span style="width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--text-2);cursor:pointer">+</span>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== DEPLOY ===== -->
+      <sc-if value="{{ isDeploy }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1180px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Deploy orbit-api</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">Roll out the generated package to your cluster</p>
+          </div>
+        </div>
+
+        <!-- stepper -->
+        <div style="display:flex;align-items:center;gap:0;margin-bottom:24px">
+          <sc-for list="{{ deploySteps }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;flex:{{ s.flex }}">
+              <div style="display:flex;align-items:center;gap:11px">
+                <span style="{{ s.circle }}" dangerouslySetInnerHTML="{{ s.inner }}"></span>
+                <div><div style="font-size:13px;font-weight:600;color:{{ s.titleColor }}">{{ s.title }}</div><div style="font-size:11.5px;color:var(--text-3)">{{ s.sub }}</div></div>
+              </div>
+              <sc-if value="{{ s.showBar }}" hint-placeholder-val="{{ true }}"><span style="flex:1;height:2px;background:{{ s.barColor }};margin:0 16px"></span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:16px">
+          <!-- config -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:22px 24px">
+            <h3 style="font-size:14px;margin:0 0 18px">Target & configuration</h3>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-3);margin-bottom:7px">Deployment target</label>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ deployTargets }}" as="t" hint-placeholder-count="3">
+                    <button onClick="{{ t.onClick }}" style="{{ t.style }}">
+                      <span style="width:30px;height:30px;border-radius:8px;background:{{ t.tint }};display:grid;place-items:center;flex:none;color:{{ t.fg }}" dangerouslySetInnerHTML="{{ t.icon }}"></span>
+                      <span style="flex:1;text-align:left"><span style="display:block;font-size:13px;font-weight:600;color:var(--text)">{{ t.name }}</span><span style="display:block;font-size:11.5px;color:var(--text-3)">{{ t.sub }}</span></span>
+                      <span style="{{ t.radio }}"></span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div><label style="display:block;font-size:12px;color:var(--text-3);margin-bottom:7px">Environment</label><div style="background:var(--bg-elev);border:1px solid var(--border-strong);border-radius:9px;padding:10px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between">production<span style="color:var(--text-3)">▾</span></div></div>
+                <div><label style="display:block;font-size:12px;color:var(--text-3);margin-bottom:7px">Replicas</label><div style="background:var(--bg-elev);border:1px solid var(--border-strong);border-radius:9px;padding:10px 12px;font-size:13px;font-family:'JetBrains Mono',monospace">3</div></div>
+              </div>
+              <button onClick="{{ startDeploy }}" style="width:100%;background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;padding:13px;border-radius:11px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 14l-3-3 2-4c2.5-4 6-5 10-5 0 4-1 7.5-5 10l-4 2Z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/></svg>{{ deployBtnLabel }}
+              </button>
+            </div>
+          </div>
+          <!-- live log terminal -->
+          <div style="background:#0b0b0f;border:1px solid var(--border);border-radius:15px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;gap:9px;padding:13px 18px;border-bottom:1px solid var(--border);background:var(--bg-elev)">
+              <span style="width:9px;height:9px;border-radius:50%;background:{{ deployDotColor }};box-shadow:0 0 8px {{ deployDotColor }}"></span>
+              <span style="font-size:13px;font-weight:600">{{ deployStatusLabel }}</span>
+              <div style="flex:1"></div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-3)">{{ deployElapsed }}</span>
+            </div>
+            <div style="flex:1;min-height:300px;max-height:400px;overflow-y:auto;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.85">
+              <sc-for list="{{ deployLog }}" as="l" hint-placeholder-count="6">
+                <div style="display:flex;gap:10px"><span style="color:var(--text-3);flex:none">{{ l.ts }}</span><span style="color:{{ l.color }};white-space:pre-wrap">{{ l.text }}</span></div>
+              </sc-for>
+              <sc-if value="{{ deployRunning }}" hint-placeholder-val="{{ false }}"><div style="color:var(--accent)">▍</div></sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== PROJECTS ===== -->
+      <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Projects</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">6 repositories connected · acme-labs organization</p>
+          </div>
+          <button onClick="{{ goConnect }}" style="background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;padding:9px 15px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>New project</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <sc-for list="{{ projects }}" as="p" hint-placeholder-count="6">
+            <button onClick="{{ p.onClick }}" style="text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:18px 20px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;gap:14px" style-hover="border-color:var(--border-strong)">
+              <div style="display:flex;align-items:center;gap:11px">
+                <span style="width:34px;height:34px;border-radius:9px;background:{{ p.tint }};display:grid;place-items:center;font-size:14px;font-weight:700;color:#fff;flex:none">{{ p.initial }}</span>
+                <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--text)">{{ p.name }}</div><div style="font-size:11.5px;color:var(--text-3)">{{ p.org }}</div></div>
+                <span style="{{ p.statusStyle }}">{{ p.status }}</span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <sc-for list="{{ p.tags }}" as="t" hint-placeholder-count="3">
+                  <span style="font-size:11px;color:var(--text-2);background:var(--bg-elev);border:1px solid var(--border);border-radius:6px;padding:2px 8px">{{ t }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px">
+                <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:{{ p.healthColor }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ p.healthColor }}"></span>Health {{ p.health }}</span>
+                <span style="font-size:11.5px;color:var(--text-3)">{{ p.updated }}</span>
+              </div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== DEPLOYMENT HISTORY ===== -->
+      <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Deployment history</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">orbit-api · 42 deployments · 98.4% success rate</p>
+          </div>
+          <button onClick="{{ goDeploy }}" style="background:linear-gradient(135deg,var(--accent),#6a58f5);color:#fff;border:0;padding:9px 15px;border-radius:9px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer">New deployment</button>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:130px 1fr 150px 130px 110px 90px;padding:12px 20px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border)">
+            <span>Status</span><span>Version / commit</span><span>Target</span><span>Triggered by</span><span>Duration</span><span>When</span>
+          </div>
+          <sc-for list="{{ deploys }}" as="d" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:130px 1fr 150px 130px 110px 90px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)">
+              <span><span style="{{ d.badge }}">{{ d.status }}</span></span>
+              <div style="min-width:0"><div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;color:var(--text)">{{ d.version }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-3)">{{ d.commit }} · {{ d.msg }}</div></div>
+              <span style="font-size:12.5px;color:var(--text-2)">{{ d.target }}</span>
+              <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-2)"><span style="width:20px;height:20px;border-radius:50%;background:{{ d.avatarBg }};display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff">{{ d.who }}</span>{{ d.byName }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)">{{ d.dur }}</span>
+              <span style="font-size:11.5px;color:var(--text-3)">{{ d.when }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== INTEGRATIONS & API KEYS ===== -->
+      <sc-if value="{{ isIntegrations }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1080px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Integrations & API keys</h1>
+        <p style="color:var(--text-2);margin:0 0 24px;font-size:13.5px">Connect DevPilot to your cloud, registry and observability stack</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px">
+          <sc-for list="{{ integrations }}" as="i" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:15px 17px">
+              <span style="width:38px;height:38px;border-radius:10px;background:{{ i.tint }};display:grid;place-items:center;flex:none;color:{{ i.fg }}" dangerouslySetInnerHTML="{{ i.icon }}"></span>
+              <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600">{{ i.name }}</div><div style="font-size:11.5px;color:var(--text-3)">{{ i.desc }}</div></div>
+              <span style="{{ i.pill }}">{{ i.state }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <h3 style="font-size:15px;margin:0">API keys</h3>
+          <button style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text);padding:8px 14px;border-radius:9px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer">+ Create key</button>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden">
+          <sc-for list="{{ apiKeys }}" as="k" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:16px;padding:15px 20px;border-bottom:1px solid var(--border)">
+              <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">{{ k.name }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);margin-top:3px">{{ k.token }}</div></div>
+              <span style="font-size:11.5px;color:var(--text-3)">Last used {{ k.used }}</span>
+              <span style="{{ k.scopeStyle }}">{{ k.scope }}</span>
+              <button style="background:transparent;border:1px solid var(--border);color:var(--text-2);padding:6px 11px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer">Revoke</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== TEAM & BILLING ===== -->
+      <sc-if value="{{ isTeam }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1080px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 20px">Team & billing</h1>
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+          <!-- members -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)">
+              <h3 style="font-size:14px;margin:0">Members <span style="color:var(--text-3);font-weight:400">· 5</span></h3>
+              <button style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text);padding:7px 13px;border-radius:8px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer">Invite</button>
+            </div>
+            <sc-for list="{{ members }}" as="m" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:13px;padding:14px 20px;border-bottom:1px solid var(--border)">
+                <span style="width:34px;height:34px;border-radius:50%;background:{{ m.bg }};display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;flex:none">{{ m.initials }}</span>
+                <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600">{{ m.name }}</div><div style="font-size:11.5px;color:var(--text-3)">{{ m.email }}</div></div>
+                <span style="{{ m.roleStyle }}">{{ m.role }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <!-- plan -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:linear-gradient(135deg,rgba(124,108,255,.12),rgba(51,214,200,.05));border:1px solid rgba(124,108,255,.25);border-radius:15px;padding:20px 22px">
+              <div style="font-size:12px;color:var(--text-3);margin-bottom:6px">Current plan</div>
+              <div style="font-size:20px;font-weight:700;letter-spacing:-.02em;margin-bottom:2px">Team</div>
+              <div style="font-size:13px;color:var(--text-2);margin-bottom:16px">$49 / seat / month · 5 seats</div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ planFeatures }}" as="f" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 7" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ f }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px 22px">
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px"><span style="color:var(--text-2)">This month</span><span style="font-weight:700">$245.00</span></div>
+              <div style="height:6px;background:var(--bg-elev);border-radius:4px;overflow:hidden;margin-bottom:8px"><div style="height:100%;width:62%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+              <div style="font-size:11.5px;color:var(--text-3)">Renews Aug 1 · Visa ···· 4242</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== NOTIFICATIONS ===== -->
+      <sc-if value="{{ isNotifications }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:840px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Notifications</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">{{ notifSubtitle }}</p>
+          </div>
+          <button onClick="{{ markAllRead }}" style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text);padding:8px 14px;border-radius:9px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer">Mark all as read</button>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+          <sc-for list="{{ notifTabs }}" as="t" hint-placeholder-count="4">
+            <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}<sc-if value="{{ t.count }}" hint-placeholder-val="{{ true }}"><span style="{{ t.countStyle }}">{{ t.count }}</span></sc-if></button>
+          </sc-for>
+        </div>
+
+        <sc-for list="{{ notifGroups }}" as="g" hint-placeholder-count="2">
+          <sc-if value="{{ g.show }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin:6px 0 10px">{{ g.group }}</div>
+            <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:22px">
+              <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="3">
+                <div style="{{ n.wrap }}">
+                  <span style="width:38px;height:38px;border-radius:10px;background:{{ n.tint }};display:grid;place-items:center;flex:none;color:{{ n.fg }}" dangerouslySetInnerHTML="{{ n.icon }}"></span>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600;color:var(--text);line-height:1.35">{{ n.title }}</span><span style="{{ n.chipStyle }}">{{ n.chip }}</span></div>
+                    <div style="font-size:12.5px;color:var(--text-2);margin-top:3px;line-height:1.5">{{ n.body }}</div>
+                    <div style="font-size:11.5px;color:var(--text-3);margin-top:6px">{{ n.time }}</div>
+                  </div>
+                  <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ true }}"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;margin-top:6px;box-shadow:0 0 8px var(--accent)"></span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </sc-for>
+
+        <sc-if value="{{ notifEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:70px 20px;color:var(--text-3)">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style="margin-bottom:12px"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <div style="font-size:14px;color:var(--text-2)">You're all caught up</div>
+            <div style="font-size:12.5px;margin-top:4px">No notifications match this filter.</div>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <!-- ===== ACTIVITY / AUDIT LOG ===== -->
+      <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1240px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px">
+          <div>
+            <h1 style="font-size:24px;letter-spacing:-.02em;margin:0 0 5px">Activity log</h1>
+            <p style="color:var(--text-2);margin:0;font-size:13.5px">A complete audit trail of every action across orbit-api</p>
+          </div>
+          <button style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text);padding:8px 14px;border-radius:9px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Export CSV
+          </button>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <sc-for list="{{ auditFilters }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}<span style="{{ f.countStyle }}">{{ f.count }}</span></button>
+          </sc-for>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <div style="min-width:760px">
+              <div style="display:grid;grid-template-columns:1fr 168px 148px 150px;gap:14px;padding:12px 20px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);font-weight:600">
+                <span>Event</span><span>Actor</span><span>Target</span><span>Time</span>
+              </div>
+              <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:1fr 168px 148px 150px;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);align-items:center">
+                  <div style="display:flex;align-items:center;gap:12px;min-width:0">
+                    <span style="width:30px;height:30px;border-radius:8px;background:{{ a.tint }};display:grid;place-items:center;flex:none;color:{{ a.fg }}" dangerouslySetInnerHTML="{{ a.icon }}"></span>
+                    <div style="min-width:0"><div style="font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.title }}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">{{ a.source }}</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:9px;min-width:0">
+                    <span style="width:24px;height:24px;border-radius:50%;background:{{ a.abg }};display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;flex:none">{{ a.ini }}</span>
+                    <span style="font-size:12.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.actor }}</span>
+                  </div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.target }}</span>
+                  <div style="display:flex;align-items:center;gap:9px"><span style="{{ a.statusStyle }}"></span><span style="font-size:12px;color:var(--text-3)">{{ a.time }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== DOCUMENTATION ===== -->
+      <sc-if value="{{ isDocs }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1180px;margin:0 auto;padding:28px 30px 60px;animation:dp-up .35s ease both">
+        <div data-docgrid style="display:grid;grid-template-columns:236px 1fr;gap:34px;align-items:start">
+          <!-- doc nav -->
+          <div style="position:sticky;top:82px">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+              <span style="width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 4a1 1 0 0 1 1-1h13v16H6a1 1 0 0 0-1 1V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 19a1 1 0 0 0 1 1h13" stroke="currentColor" stroke-width="1.6"/></svg></span>
+              <span style="font-size:13.5px;font-weight:700;letter-spacing:-.01em">Documentation</span>
+            </div>
+            <sc-for list="{{ docNav }}" as="sec" hint-placeholder-count="3">
+              <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);padding:12px 0 4px">{{ sec.group }}</div>
+              <sc-for list="{{ sec.items }}" as="d" hint-placeholder-count="3">
+                <button onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</button>
+              </sc-for>
+            </sc-for>
+          </div>
+          <!-- article -->
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-3);margin-bottom:16px">
+              <span>{{ docSection }}</span><span>/</span><span style="color:var(--text-2)">{{ docTitle }}</span>
+            </div>
+            <article style="max-width:720px;font-size:14px;line-height:1.72;color:var(--text-2)" dangerouslySetInnerHTML="{{ docBody }}"></article>
+            <div style="max-width:720px;display:flex;justify-content:space-between;gap:14px;margin-top:36px;padding-top:22px;border-top:1px solid var(--border)">
+              <sc-if value="{{ docPrev }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ docPrevGo }}" style="background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 16px;cursor:pointer;font-family:inherit;text-align:left;color:var(--text)"><div style="font-size:11px;color:var(--text-3)">← Previous</div><div style="font-size:13px;font-weight:600;margin-top:2px">{{ docPrevLabel }}</div></button>
+              </sc-if>
+              <sc-if value="{{ docNext }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ docNextGo }}" style="background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 16px;cursor:pointer;font-family:inherit;text-align:right;color:var(--text);margin-left:auto"><div style="font-size:11px;color:var(--text-3)">Next →</div><div style="font-size:13px;font-weight:600;margin-top:2px">{{ docNextLabel }}</div></button>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</sc-if>
+
+<!-- COMMAND PALETTE -->
+<sc-if value="{{ cmdOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeCmd }}" style="position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding-top:14vh">
+  <div onClick="{{ stop }}" style="width:560px;max-width:90vw;background:var(--surface);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.6);overflow:hidden;animation:dp-up .2s ease both">
+    <div style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid var(--border)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="var(--text-3)" stroke-width="1.8"/><path d="m20 20-3-3" stroke="var(--text-3)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input autofocus placeholder="Jump to a screen or ask DevPilot…" style="flex:1;background:transparent;border:0;color:var(--text);font-family:inherit;font-size:15px;outline:none"/>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);border:1px solid var(--border);border-radius:5px;padding:2px 6px">ESC</span>
+    </div>
+    <div style="max-height:340px;overflow-y:auto;padding:8px">
+      <sc-for list="{{ cmdItems }}" as="c" hint-placeholder-count="6">
+        <button onClick="{{ c.onClick }}" style="width:100%;display:flex;align-items:center;gap:12px;background:transparent;border:0;padding:10px 12px;border-radius:9px;cursor:pointer;font-family:inherit;color:var(--text);text-align:left" style-hover="background:var(--bg-elev)">
+          <span style="width:24px;height:24px;display:grid;place-items:center;color:var(--text-2);flex:none" dangerouslySetInnerHTML="{{ c.icon }}"></span>
+          <span style="flex:1;font-size:13.5px">{{ c.label }}</span>
+          <span style="font-size:11px;color:var(--text-3)">{{ c.kind }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:860}}">
+const ICON = {
+  dashboard:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>',
+  repo:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 4a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2V4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 18h15" stroke="currentColor" stroke-width="1.7"/></svg>',
+  graph:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="8" r="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="18" r="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M8 7.5 15.5 8M8 16l8-6" stroke="currentColor" stroke-width="1.7"/></svg>',
+  shield:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5l-8-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  docker:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12h16c0 3-2 6-6 6H8c-3 0-5-3-5-6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 12V9m3 3V9m3 3V9m3 3V9M9 6V9m3-3v3m3-3v3" stroke="currentColor" stroke-width="1.6"/></svg>',
+  k8s:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2 3.5 6v8L12 22l8.5-8V6L12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.5" stroke="currentColor" stroke-width="1.6"/><path d="m12 6 0 2.5M12 13.5V17M8 9l1.8 1.2M16 9l-1.8 1.2M9 15l1.2-1.6M15 15l-1.2-1.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+  terraform:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M10 4 4 7v6l6 3V10l6-3V1l-6 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m17 9-6 3v6l6-3V9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+  pipe:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="6" cy="18" r="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="12" r="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M6 8.5v7M8.5 6H14a1.5 1.5 0 0 1 1.5 1.5v3M8.5 18H14a1.5 1.5 0 0 0 1.5-1.5v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  rocket:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 14l-3-3 2-4c2.5-4 6-5 10-5 0 4-1 7.5-5 10l-4 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="15" cy="9" r="1.5" stroke="currentColor" stroke-width="1.6"/></svg>',
+  coin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="6" rx="8" ry="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" stroke="currentColor" stroke-width="1.6"/></svg>',
+  spark:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v2m0 14v2M5 5l1.5 1.5M17.5 17.5 19 19M3 12h2m14 0h2M5 19l1.5-1.5M17.5 6.5 19 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/></svg>',
+  compose:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>',
+  helm:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v4m0 10v4m9-9h-4M7 12H3m12.4-5.4-2.8 2.8m-1.2 1.2-2.8 2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  folder:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  clock:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  plug:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 2v6m6-6v6M6 8h12v3a6 6 0 0 1-12 0V8Zm6 9v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  users:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3 20a6 6 0 0 1 12 0M16 5.2a3.2 3.2 0 0 1 0 5.6M18 20a6 6 0 0 0-3-5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  aws:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 15c5 3 13 3 18 0M4 17c0 1 1 2 3 2M6 8l2 5 2-4 2 4 2-5M18 8v5m0-5c1.5 0 2 .6 2 1.4 0 1.4-3 1-3 2.4 0 .8.6 1.2 1.5 1.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  registry:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="10" width="18" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="16" width="18" height="4" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>',
+  chart:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20V6m5 14V10m5 10V4m5 16v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  slack:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="10" y="3" width="4" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="10" y="15" width="4" height="6" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="10" width="10" height="4" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="15" y="10" width="6" height="4" rx="2" stroke="currentColor" stroke-width="1.6"/></svg>',
+  bell:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  activity:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 12h4l3 8 4-16 3 8h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  book:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 4a1 1 0 0 1 1-1h13v16H6a1 1 0 0 0-1 1V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 19a1 1 0 0 0 1 1h13" stroke="currentColor" stroke-width="1.6"/></svg>',
+};
+const KW = '#7cc4ff', STR='#8fdf9c', COM='#5a5a66', TXT='#c9c9d4', PUNC='#8b8b96';
+const H = (s) => ({__html: s});
+
+class Component extends DCLogic {
+  state = {
+    theme:'dark', route:'landing', repoUrl:'github.com/acme-labs/orbit-api',
+    notifFilter:'all', notifAllRead:false, auditFilter:'all', docPage:'getting-started', mobileNav:false,
+    analyzing:false, analysisIdx:-1, analysisDone:false,
+    genTab:'dockerfile', chatInput:'', cmdOpen:false,
+    costProvider:'AWS', diagView:'infrastructure',
+    deployTarget:'eks', deployStep:0, deployRunning:false, deployDone:false, deployLog:[], deployElapsed:'0.0s',
+    chat:[{role:'ai',text:"I've analyzed **orbit-api**. It's a stateless Go 1.22 service using the Chi router and sqlc, backed by Postgres and Redis. Cloud-readiness is **82/100** — the two blockers were hard-coded connection strings and a missing readiness probe, both fixed in the generated manifests.\n\nWhat would you like to dig into?"}],
+  };
+  rootRef = React.createRef();
+
+  themes = {
+    dark:{'--bg':'#0a0a0c','--bg-elev':'#0e0e12','--surface':'#141419','--surface-2':'#1b1b22','--border':'rgba(255,255,255,.07)','--border-strong':'rgba(255,255,255,.13)','--text':'#f4f4f7','--text-2':'#a2a2ae','--text-3':'#6a6a76','--accent':'#7c6cff','--accent-2':'#33d6c8','--accent-soft':'rgba(124,108,255,.15)','--green':'#3ecf8e','--amber':'#f5b445','--red':'#f16a6a','--shadow':'0 12px 40px rgba(0,0,0,.5)'},
+    light:{'--bg':'#f6f7f9','--bg-elev':'#ffffff','--surface':'#ffffff','--surface-2':'#f1f2f5','--border':'rgba(9,9,15,.09)','--border-strong':'rgba(9,9,15,.15)','--text':'#15151b','--text-2':'#57575f','--text-3':'#8a8a94','--accent':'#6a58f5','--accent-2':'#12a89a','--accent-soft':'rgba(106,88,245,.10)','--green':'#12a05f','--amber':'#b9770e','--red':'#d8434a','--shadow':'0 12px 40px rgba(9,9,15,.12)'},
+  };
+
+  componentDidMount(){ this.applyTheme(); document.addEventListener('keydown', this.onKey); }
+  componentWillUnmount(){ clearInterval(this._ai); clearInterval(this._dep); document.removeEventListener('keydown', this.onKey); }
+  onKey = (e) => {
+    if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); this.setState(s=>({cmdOpen:!s.cmdOpen})); }
+    if(e.key==='Escape') this.setState({cmdOpen:false});
+  };
+  applyTheme = () => { const el=this.rootRef.current; if(!el) return; const t=this.themes[this.state.theme]; Object.entries(t).forEach(([k,v])=>el.style.setProperty(k,v)); };
+  toggleTheme = () => this.setState(s=>({theme:s.theme==='dark'?'light':'dark'}), this.applyTheme);
+
+  go = (route, cb) => { this.setState({route, cmdOpen:false, mobileNav:false}, ()=>{ const m=this.rootRef.current?.querySelector('main'); if(m) m.scrollTop=0; if(cb) cb(); }); };
+  goConnect = () => this.go('connect');
+  goDashboard = () => this.go('dashboard');
+  goGenerator = () => this.go('generator');
+  goCost = () => this.go('cost');
+  goAssistant = () => this.go('assistant');
+  goDeploy = () => this.go('deploy');
+  goAnalysis = () => this.go('analysis', this.startAnalysis);
+  goNotifications = () => this.go('notifications');
+  goActivity = () => this.go('activity');
+  goDocs = () => this.go('docs');
+  toggleMobileNav = () => this.setState(s=>({mobileNav:!s.mobileNav}));
+  closeMobileNav = () => this.setState({mobileNav:false});
+  setNotifFilter = (f) => this.setState({notifFilter:f});
+  markAllRead = () => this.setState({notifAllRead:true});
+  setAuditFilter = (f) => this.setState({auditFilter:f});
+  setDocPage = (p) => this.setState({docPage:p}, ()=>{ const m=this.rootRef.current?.querySelector('main'); if(m) m.scrollTop=0; });
+  submitRepo = (e) => { e.preventDefault(); this.go('connect'); };
+  setRepo = (e) => this.setState({repoUrl:e.target.value});
+
+  startAnalysis = () => {
+    clearInterval(this._ai);
+    this.setState({analyzing:true, analysisIdx:-1, analysisDone:false});
+    const total = this.steps.length;
+    this._ai = setInterval(()=>{ this.setState(s=>{ const n=s.analysisIdx+1; if(n>=total){ clearInterval(this._ai); return {analysisIdx:total-1, analyzing:false, analysisDone:true}; } return {analysisIdx:n}; }); }, 800);
+  };
+  restartAnalysis = () => this.startAnalysis();
+
+  setProvider = (p) => this.setState({costProvider:p});
+  setDiagView = (v) => this.setState({diagView:v});
+  setDeployTarget = (t) => this.setState({deployTarget:t});
+  startDeploy = () => {
+    if(this.state.deployRunning) return;
+    clearInterval(this._dep);
+    const t0=Date.now();
+    this.setState({deployRunning:true, deployDone:false, deployStep:1, deployLog:[]});
+    const lines=[
+      {text:'$ devpilot deploy --target eks --env production',color:'var(--text-2)'},
+      {text:'✓ Authenticated to cluster orbit-prod (eu-west-1)',color:'var(--green)'},
+      {text:'→ Applying k8s/deployment.yaml',color:'#7cc4ff'},
+      {text:'  deployment.apps/orbit-api configured',color:'var(--text-2)'},
+      {text:'  horizontalpodautoscaler.autoscaling/orbit-api created',color:'var(--text-2)'},
+      {text:'→ Waiting for rollout to finish...',color:'#7cc4ff'},
+      {text:'  3 of 3 replicas updated · 3 available',color:'var(--text-2)'},
+      {text:'→ Running readiness probes on /healthz',color:'#7cc4ff'},
+      {text:'  pod orbit-api-7d9f4b · ready (204ms)',color:'var(--text-2)'},
+      {text:'  pod orbit-api-7d9f4c · ready (188ms)',color:'var(--text-2)'},
+      {text:'  pod orbit-api-7d9f4d · ready (211ms)',color:'var(--text-2)'},
+      {text:'✓ Rollout complete — orbit-api:1.4.0 live at orbit.acme.dev',color:'var(--green)'},
+    ];
+    let i=0;
+    this._dep=setInterval(()=>{
+      const el=((Date.now()-t0)/1000).toFixed(1)+'s';
+      if(i>=lines.length){ clearInterval(this._dep); this.setState({deployRunning:false, deployDone:true, deployStep:4, deployElapsed:el}); return; }
+      const ts=new Date().toLocaleTimeString('en-GB',{hour12:false});
+      const line={...lines[i], ts};
+      i++;
+      const step = i<3?1 : i<8?2 : 3;
+      this.setState(s=>({deployLog:[...s.deployLog,line], deployElapsed:el, deployStep:step}), ()=>{ const box=this.rootRef.current?.querySelectorAll('main [style*="overflow-y:auto"]'); });
+    }, 620);
+  };
+  openCmd = () => this.setState({cmdOpen:true});
+  closeCmd = () => this.setState({cmdOpen:false});
+  stop = (e) => e.stopPropagation();
+
+  setChatInput = (e) => this.setState({chatInput:e.target.value});
+  sendChat = (e) => { e && e.preventDefault(); const q=this.state.chatInput.trim(); if(!q) return; this.pushChat(q); };
+  askQuick = (q) => { this.go('assistant', ()=>this.pushChat(q)); };
+  pushChat = (q) => {
+    const reply = this.replyFor(q);
+    this.setState(s=>({chat:[...s.chat,{role:'user',text:q},{role:'ai',text:reply}], chatInput:''}), ()=>{ const m=this.rootRef.current?.querySelector('main'); if(m) m.scrollTop=m.scrollHeight; });
+  };
+  replyFor = (q) => {
+    const l=q.toLowerCase();
+    if(l.includes('secur')||l.includes('vuln')) return "I found **1 high** and **3 medium** issues. The high is `CVE-2024-2961` in an outdated `glibc` base layer — the generated Dockerfile already moves you to `distroless/static:nonroot`, which removes it. One hard-coded Postgres password in `config/dev.yaml` was flagged by secret scanning; I've replaced it with a Kubernetes Secret reference.";
+    if(l.includes('cost')||l.includes('cheap')) return "Estimated **$412/mo** on AWS eu-west-1: EKS control plane $73, 3× t4g.medium nodes $180, RDS Postgres (Multi-AZ, db.t4g.medium) $124, ALB $22, CloudWatch $13. Dropping to a single-AZ RDS in staging saves ~$62/mo. Want me to generate a staging Terraform workspace?";
+    if(l.includes('scale')||l.includes('replica')) return "The Deployment ships with 3 replicas and a HorizontalPodAutoscaler targeting 65% CPU (min 3, max 10). Because the service is stateless and offloads sessions to Redis, horizontal scaling is safe. I'd also add a PodDisruptionBudget of `minAvailable: 2` for zero-downtime rollouts — shall I add it?";
+    if(l.includes('dockerfile')||l.includes('image')||l.includes('docker')) return "The Dockerfile is a 2-stage build: `golang:1.22-alpine` compiles a static CGO-free binary, then it's copied into `distroless/static:nonroot`. Final image is **~14 MB**, runs as non-root, and has no shell — a minimal attack surface. Build is cached on `go.mod`/`go.sum` so dependency layers only rebuild when they change.";
+    return "Good question. Based on orbit-api's architecture, I'd recommend reviewing the generated Kubernetes manifests and Terraform module together — the readiness probe and connection-string handling are the two changes that unblock a production deploy. I can walk through any specific file, estimate cost impact, or open a PR with these changes.";
+  };
+
+  // ---- data ----
+  steps = [
+    {t:'Cloning repository',d:'Shallow clone of acme-labs/orbit-api @ main',m:'214 files · 3.2 MB',mc:'--text-3'},
+    {t:'Detecting languages & frameworks',d:'Go 1.22 · Chi router · sqlc · Buf gRPC',m:'Go 91% · Shell 6% · Dockerfile 3%',mc:'--text-3'},
+    {t:'Mapping architecture',d:'Stateless API + Postgres + Redis + NATS stream',m:'3 external dependencies',mc:'--text-3'},
+    {t:'Resolving dependencies',d:'38 Go modules resolved from go.sum',m:'2 outdated · 0 yanked',mc:'--amber'},
+    {t:'Scanning secrets & vulnerabilities',d:'Trivy + gitleaks across history',m:'1 high · 3 medium · 1 secret',mc:'--red'},
+    {t:'Assessing cloud readiness',d:'12-factor checks, health probes, statelessness',m:'Score 82 / 100',mc:'--amber'},
+    {t:'Generating DevOps assets',d:'Docker, Compose, K8s, Helm, Terraform, CI/CD',m:'11 files produced',mc:'--green'},
+    {t:'Estimating cloud cost',d:'AWS eu-west-1, production profile',m:'≈ $412 / month',mc:'--green'},
+  ];
+  stack = [
+    {name:'Go',v:'1.22',c:'#6ad7e5'},{name:'Chi',v:'v5',c:'#7c6cff'},{name:'PostgreSQL',v:'16',c:'#5b9bd5'},
+    {name:'Redis',v:'7',c:'#f16a6a'},{name:'NATS',v:'2.10',c:'#3ecf8e'},{name:'gRPC',v:'Buf',c:'#f5b445'},
+  ];
+  files = {
+    dockerfile:{name:'Dockerfile',desc:'Multi-stage · distroless',size:'842 B',note:'Optimized to a ~14 MB non-root distroless image.',code:
+`# syntax=docker/dockerfile:1.7
+#--- build stage ---
+FROM golang:1.22-alpine AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath \\
+    -ldflags="-s -w" -o /out/orbit ./cmd/server
+
+#--- runtime stage ---
+FROM gcr.io/distroless/static:nonroot
+WORKDIR /app
+COPY --from=build /out/orbit /app/orbit
+EXPOSE 8080
+USER nonroot:nonroot
+ENTRYPOINT ["/app/orbit"]`},
+    compose:{name:'docker-compose.yaml',desc:'Local dev stack',size:'1.1 KB',note:'Postgres + Redis with health-gated startup.',code:
+`services:
+  api:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      DATABASE_URL: postgres://orbit:orbit@db:5432/orbit
+      REDIS_URL: redis://cache:6379
+    depends_on:
+      db: { condition: service_healthy }
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: orbit
+      POSTGRES_PASSWORD: orbit
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbit"]
+      interval: 5s
+  cache:
+    image: redis:7-alpine`},
+    kubernetes:{name:'k8s/deployment.yaml',desc:'Deployment + probes',size:'1.4 KB',note:'Adds the readiness probe that was missing in the repo.',code:
+`apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orbit-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: orbit-api }
+  template:
+    metadata:
+      labels: { app: orbit-api }
+    spec:
+      containers:
+        - name: orbit-api
+          image: ghcr.io/acme-labs/orbit-api:1.4.0
+          ports: [{ containerPort: 8080 }]
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            initialDelaySeconds: 5`},
+    helm:{name:'helm/values.yaml',desc:'Chart values',size:'640 B',note:'Parameterized for staging & production overlays.',code:
+`image:
+  repository: ghcr.io/acme-labs/orbit-api
+  tag: "1.4.0"
+replicaCount: 3
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 65
+resources:
+  requests: { cpu: 100m, memory: 128Mi }
+  limits:   { cpu: 500m, memory: 512Mi }
+postgresql:
+  enabled: false
+  externalHost: orbit.rds.amazonaws.com`},
+    terraform:{name:'infra/main.tf',desc:'AWS EKS + RDS',size:'2.0 KB',note:'Multi-AZ RDS and a right-sized EKS node group.',code:
+`terraform {
+  required_version = ">= 1.7"
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+  }
+}
+
+module "eks" {
+  source          = "terraform-aws-modules/eks/aws"
+  cluster_name    = "orbit-prod"
+  cluster_version = "1.29"
+  vpc_id          = module.vpc.vpc_id
+  subnet_ids      = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    default = {
+      instance_types = ["t4g.medium"]
+      min_size = 3
+      max_size = 10
+    }
+  }
+}
+
+resource "aws_db_instance" "orbit" {
+  engine            = "postgres"
+  engine_version    = "16.3"
+  instance_class    = "db.t4g.medium"
+  allocated_storage = 50
+  multi_az          = true
+}`},
+    cicd:{name:'.github/workflows/deploy.yaml',desc:'GitHub Actions',size:'980 B',note:'Build, scan, push and roll out on merge to main.',code:
+`name: deploy
+on:
+  push: { branches: [main] }
+jobs:
+  ship:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/acme-labs/orbit-api:\${{ github.sha }}
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.24.0
+      - name: Roll out to EKS
+        run: |
+          kubectl set image deploy/orbit-api \\
+            orbit-api=ghcr.io/acme-labs/orbit-api:\${{ github.sha }}`},
+  };
+  fileOrder = ['dockerfile','compose','kubernetes','helm','terraform','cicd'];
+  fileMeta = {
+    dockerfile:{icon:ICON.docker,tint:'rgba(91,155,213,.16)',fg:'#5b9bd5'},
+    compose:{icon:ICON.compose,tint:'rgba(91,155,213,.16)',fg:'#5b9bd5'},
+    kubernetes:{icon:ICON.k8s,tint:'rgba(124,108,255,.16)',fg:'#7c6cff'},
+    helm:{icon:ICON.helm,tint:'rgba(51,214,200,.16)',fg:'#33d6c8'},
+    terraform:{icon:ICON.terraform,tint:'rgba(124,108,255,.16)',fg:'#8b7dff'},
+    cicd:{icon:ICON.pipe,tint:'rgba(62,207,142,.16)',fg:'#3ecf8e'},
+  };
+
+  colorLine = (t) => {
+    const s=t.trimStart();
+    if(s.startsWith('#')&&!s.startsWith('#syntax')) return COM;
+    if(s.startsWith('#')) return COM;
+    if(/^(FROM|WORKDIR|COPY|RUN|EXPOSE|USER|ENTRYPOINT|CMD|ARG|ENV|LABEL)\b/.test(s)) return KW;
+    return TXT;
+  };
+
+  hiFile = (key) => {
+    const f=this.files[key];
+    const lines=f.code.split('\n').map((t,i)=>{
+      const s=t.trimStart();
+      let color=TXT;
+      if(s.startsWith('#')) color=COM;
+      else if(/^(FROM|WORKDIR|COPY|RUN|EXPOSE|USER|ENTRYPOINT|CMD|ARG|ENV|apiVersion|kind|name|terraform|module|resource|services|image|on|jobs|steps|uses|run):?\b/.test(s)) color=KW;
+      return {n:i+1, t, color};
+    });
+    return {...f, lines};
+  };
+
+  navModel = () => {
+    const groups=[
+      {group:'Overview', items:[
+        {label:'Dashboard', route:'dashboard', icon:ICON.dashboard},
+        {label:'Notifications', route:'notifications', icon:ICON.bell, badge:(this.state.notifAllRead?null:'3'), badgeType:'danger'},
+        {label:'Projects', route:'projects', icon:ICON.folder},
+        {label:'Repository analysis', route:'analysis', icon:ICON.repo},
+        {label:'Architecture diagram', route:'diagram', icon:ICON.graph},
+      ]},
+      {group:'Generate', items:[
+        {label:'Docker & Compose', route:'generator', icon:ICON.docker, tab:'dockerfile'},
+        {label:'Kubernetes & Helm', route:'generator', icon:ICON.k8s, tab:'kubernetes'},
+        {label:'Terraform', route:'generator', icon:ICON.terraform, tab:'terraform'},
+        {label:'CI/CD pipelines', route:'generator', icon:ICON.pipe, tab:'cicd'},
+      ]},
+      {group:'Operate', items:[
+        {label:'Security', route:'security', icon:ICON.shield, badge:'4', badgeType:'danger'},
+        {label:'Cloud cost', route:'cost', icon:ICON.coin},
+        {label:'Deployments', route:'deploy', icon:ICON.rocket},
+        {label:'Deployment history', route:'history', icon:ICON.clock},
+        {label:'Activity log', route:'activity', icon:ICON.activity},
+      ]},
+      {group:'Assistant', items:[
+        {label:'AI assistant', route:'assistant', icon:ICON.spark},
+      ]},
+      {group:'Settings', items:[
+        {label:'Integrations & keys', route:'integrations', icon:ICON.plug},
+        {label:'Team & billing', route:'team', icon:ICON.users},
+        {label:'Documentation', route:'docs', icon:ICON.book},
+      ]},
+    ];
+    return groups.map(g=>({group:g.group, items:g.items.map(it=>{
+      const active = this.state.route===it.route && (!it.tab || it.tab===this.state.genTab);
+      const style=`width:100%;display:flex;align-items:center;gap:11px;background:${active?'var(--accent-soft)':'transparent'};border:0;border-radius:9px;padding:8px 10px;margin:1px 0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:${active?'600':'500'};color:${active?'var(--accent)':'var(--text-2)'}`;
+      const onClick=()=>{ if(it.tab) this.setState({genTab:it.tab}); this.go(it.route, it.route==='analysis'?this.startAnalysis:undefined); };
+      const badgeStyle = it.badgeType==='danger'
+        ? 'background:rgba(241,106,106,.16);color:var(--red);font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px'
+        : 'background:var(--surface-2);color:var(--text-3);font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em';
+      return {label:it.label, icon:H(it.icon), style, onClick, badge:it.badge, badgeStyle};
+    })}));
+  };
+
+  renderVals(){
+    const r=this.state.route;
+    const titles={dashboard:'Dashboard',analysis:'Repository analysis',generator:'Generated assets',assistant:'AI assistant',security:'Security',cost:'Cloud cost',deploy:'Deployments',diagram:'Architecture diagram',projects:'Projects',history:'Deployment history',integrations:'Integrations & keys',team:'Team & billing',notifications:'Notifications',activity:'Activity log',docs:'Documentation'};
+    const isMarketing = r==='landing'||r==='connect';
+    const total=this.steps.length;
+    const done=this.state.analysisIdx+1;
+    const pct = this.state.analysisDone?100:Math.round((Math.max(0,done)/total)*100);
+
+    const timeline=this.steps.map((s,i)=>{
+      const st = i<=this.state.analysisIdx ? (this.state.analysisDone||i<this.state.analysisIdx?'done':'active') : 'pending';
+      const active = i===this.state.analysisIdx && !this.state.analysisDone;
+      let dot,dotInner='';
+      if(st==='done'||(i<=this.state.analysisIdx&&this.state.analysisDone)){ dot='width:22px;height:22px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;flex:none'; dotInner='<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 7" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+      else if(active){ dot='width:22px;height:22px;border-radius:50%;border:2px solid var(--accent);border-top-color:transparent;flex:none;animation:dp-spin .8s linear infinite'; }
+      else { dot='width:22px;height:22px;border-radius:50%;border:2px solid var(--border-strong);flex:none'; }
+      const finished = i<=this.state.analysisIdx;
+      return {title:s.t, detail:s.d, meta:s.m, showMeta:finished, dot, dotInner:H(dotInner),
+        line: i<this.state.analysisIdx?'var(--accent)':'var(--border)',
+        op: finished?1:.4, titleColor: finished?'var(--text)':'var(--text-3)',
+        metaStyle:`display:inline-block;margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(${s.mc});background:var(--bg-elev);border:1px solid var(--border);border-radius:6px;padding:3px 8px`};
+    });
+
+    const scores=[
+      {label:'Repository health',value:92,tag:'Excellent',c:'--green'},
+      {label:'Security score',value:78,tag:'Needs review',c:'--amber'},
+      {label:'Deploy readiness',value:82,tag:'Ready w/ fixes',c:'--accent'},
+      {label:'Cloud readiness',value:88,tag:'Strong',c:'--accent-2'},
+    ].map(g=>({...g, color:`var(${g.c})`, offset:Math.round(195*(1-g.value/100))}));
+
+    const costBars=[
+      {m:'Mar',v:498},{m:'Apr',v:471},{m:'May',v:455},{m:'Jun',v:430},{m:'Jul',v:418},{m:'Aug',v:412},
+    ].map((b,i,a)=>({m:b.m, h:Math.round(20+ (b.v-380)/130*54), fill:i===a.length-1?'linear-gradient(180deg,var(--accent),var(--accent-2))':'var(--border-strong)'}));
+
+    const asset=(title,sub,key,tint,fg,icon)=>({title,sub,tint,fg,icon:H(icon),onClick:()=>{ this.setState({genTab:key}); this.go('generator'); }});
+    const assetCards=[
+      asset('Dockerfile','Multi-stage · 14 MB','dockerfile','rgba(91,155,213,.14)','#5b9bd5',ICON.docker),
+      asset('Kubernetes','Deployment + HPA','kubernetes','rgba(124,108,255,.14)','#7c6cff',ICON.k8s),
+      asset('Terraform','EKS + RDS','terraform','rgba(139,125,255,.14)','#8b7dff',ICON.terraform),
+      asset('Helm chart','Staging + prod','helm','rgba(51,214,200,.14)','#33d6c8',ICON.helm),
+      asset('CI/CD','GitHub Actions','cicd','rgba(62,207,142,.14)','#3ecf8e',ICON.pipe),
+      asset('Compose','Local dev stack','compose','rgba(245,180,69,.14)','#f5b445',ICON.compose),
+    ];
+
+    const recs=[
+      {title:'Move secrets to a Kubernetes Secret',body:'config/dev.yaml has a hard-coded Postgres password.',c:'--red'},
+      {title:'Add a PodDisruptionBudget',body:'Guarantee minAvailable: 2 for zero-downtime rollouts.',c:'--amber'},
+      {title:'Enable RDS storage autoscaling',body:'Current 50 GB will fill in ~5 months at present growth.',c:'--accent'},
+    ].map(x=>({...x, dotStyle:`width:8px;height:8px;border-radius:50%;background:var(${x.c});margin-top:5px;flex:none;box-shadow:0 0 8px var(${x.c})`}));
+
+    const activity=[
+      {text:'Generated 11 DevOps assets',time:'4 hours ago',color:'var(--green)'},
+      {text:'Security scan found 1 high-severity CVE',time:'4 hours ago',color:'var(--red)'},
+      {text:'Detected Go 1.22 · Chi · Postgres · Redis',time:'4 hours ago',color:'var(--accent)'},
+      {text:'Connected acme-labs/orbit-api',time:'yesterday',color:'var(--text-3)'},
+    ];
+
+    // generator file list
+    const genFiles=this.fileOrder.map(key=>{
+      const f=this.files[key], meta=this.fileMeta[key];
+      const active=this.state.genTab===key;
+      return {name:f.name, size:f.size, icon:H(meta.icon), tint:meta.tint, fg:meta.fg,
+        onClick:()=>this.setState({genTab:key}),
+        style:`width:100%;display:flex;align-items:center;gap:10px;background:${active?'var(--surface)':'transparent'};border:1px solid ${active?'var(--border-strong)':'transparent'};border-radius:10px;padding:8px 9px;margin:2px 0;cursor:pointer;font-family:inherit`};
+    });
+    const activeFile=this.hiFile(this.state.genTab);
+
+    // chat
+    const mdToHtml=(t)=>t
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--text);font-weight:600">$1</strong>')
+      .replace(/`(.+?)`/g,'<code style="font-family:\'JetBrains Mono\',monospace;font-size:.88em;background:var(--bg-elev);border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--accent-2)">$1</code>')
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+    const chat=this.state.chat.map(m=>{
+      const isAi=m.role==='ai';
+      return {isAi,
+        wrap:`display:flex;gap:13px;${isAi?'':'flex-direction:row-reverse'}`,
+        bubble:isAi
+          ? 'flex:1;font-size:14px;line-height:1.7;color:var(--text-2);padding-top:3px'
+          : 'max-width:80%;background:var(--accent-soft);border:1px solid rgba(124,108,255,.25);color:var(--text);font-size:14px;line-height:1.6;padding:11px 15px;border-radius:14px',
+        html:H(mdToHtml(m.text))};
+    });
+    const suggestions=[
+      {label:'Explain the Dockerfile',onClick:()=>this.askQuick('Explain the Dockerfile')},
+      {label:'Is this ready to scale?',onClick:()=>this.askQuick('Is this service ready to scale?')},
+      {label:'What are the security risks?',onClick:()=>this.askQuick('What are the security risks?')},
+      {label:'How much will it cost?',onClick:()=>this.askQuick('How much will it cost to run?')},
+    ];
+
+    // ---- SECURITY ----
+    const sevData=[{label:'Critical',n:0,color:'#c04141'},{label:'High',n:1,color:'var(--red)'},{label:'Medium',n:3,color:'var(--amber)'},{label:'Low',n:2,color:'var(--accent-2)'}];
+    const sevTotal=sevData.reduce((a,b)=>a+b.n,0)||1;
+    const circ=Math.round(2*Math.PI*54);
+    let acc=0;
+    const sevArcs=sevData.filter(s=>s.n>0).map(s=>{ const frac=s.n/sevTotal; const dash=`${(circ*frac).toFixed(1)} ${circ}`; const offset=(-acc*circ).toFixed(1); acc+=frac; return {color:s.color, dash, offset}; });
+    const sevLegend=sevData;
+    const secStats=[
+      {label:'Vulnerabilities',value:'6',color:'var(--text)',sub:'across 38 dependencies'},
+      {label:'Exposed secrets',value:'1',color:'var(--red)',sub:'in commit history'},
+      {label:'Auto-fixed',value:'5',color:'var(--green)',sub:'in generated manifests'},
+    ];
+    const sevFilters=['All','High','Medium','Low'].map((l,i)=>({label:l, style:`font-size:11.5px;padding:4px 11px;border-radius:7px;cursor:pointer;border:1px solid ${i===0?'var(--border-strong)':'transparent'};color:${i===0?'var(--text)':'var(--text-3)'};background:${i===0?'var(--bg-elev)':'transparent'}`}));
+    const vbadge=(c)=>`display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:6px;background:${c}22;color:${c}`;
+    const vulns=[
+      {sev:'High',cve:'CVE-2024-2961',title:'glibc iconv buffer overflow in base image',pkg:'glibc 2.35',fix:'distroless',status:'Fixed',statusColor:'var(--green)',badge:vbadge('#f16a6a')},
+      {sev:'Medium',cve:'CVE-2024-24790',title:'net/netip mapped-address parsing',pkg:'go 1.22.0',fix:'go 1.22.4',status:'Fixed',statusColor:'var(--green)',badge:vbadge('#f5b445')},
+      {sev:'Medium',cve:'GHSA-6xf3-w9pg',title:'gRPC-Go metadata injection',pkg:'grpc 1.62',fix:'grpc 1.64',status:'Open',statusColor:'var(--amber)',badge:vbadge('#f5b445')},
+      {sev:'Low',cve:'CVE-2023-45288',title:'HTTP/2 CONTINUATION flood',pkg:'x/net 0.22',fix:'x/net 0.24',status:'Fixed',statusColor:'var(--green)',badge:vbadge('#33d6c8')},
+    ];
+
+    // ---- COST ----
+    const provTotals={AWS:412,GCP:388,Azure:441};
+    const cp=this.state.costProvider;
+    const providers=['AWS','GCP','Azure'].map(p=>({label:p, onClick:()=>this.setProvider(p),
+      style:`background:${cp===p?'var(--accent-soft)':'transparent'};color:${cp===p?'var(--accent)':'var(--text-2)'};border:0;padding:6px 14px;border-radius:7px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer`}));
+    const costModels={
+      AWS:[{name:'EKS control plane',spec:'',cost:'$73',v:73,color:'#7c6cff'},{name:'EC2 nodes',spec:'3× t4g.medium',cost:'$180',v:180,color:'#33d6c8'},{name:'RDS Postgres',spec:'Multi-AZ',cost:'$124',v:124,color:'#5b9bd5'},{name:'ALB',spec:'',cost:'$22',v:22,color:'#f5b445'},{name:'CloudWatch',spec:'logs+metrics',cost:'$13',v:13,color:'#3ecf8e'}],
+      GCP:[{name:'GKE Autopilot',spec:'',cost:'$68',v:68,color:'#7c6cff'},{name:'Compute',spec:'3× e2-medium',cost:'$168',v:168,color:'#33d6c8'},{name:'Cloud SQL',spec:'HA Postgres',cost:'$116',v:116,color:'#5b9bd5'},{name:'Load Balancer',spec:'',cost:'$21',v:21,color:'#f5b445'},{name:'Cloud Logging',spec:'',cost:'$15',v:15,color:'#3ecf8e'}],
+      Azure:[{name:'AKS',spec:'',cost:'$78',v:78,color:'#7c6cff'},{name:'VM Scale Set',spec:'3× B2s',cost:'$196',v:196,color:'#33d6c8'},{name:'Postgres Flexible',spec:'Zone-redundant',cost:'$131',v:131,color:'#5b9bd5'},{name:'App Gateway',spec:'',cost:'$24',v:24,color:'#f5b445'},{name:'Monitor',spec:'',cost:'$12',v:12,color:'#3ecf8e'}],
+    };
+    const rows=costModels[cp];
+    const maxCost=Math.max(...rows.map(r=>r.v));
+    const costRows=rows.map(r=>({...r, pct:Math.round(r.v/maxCost*100)}));
+    const costTotal='$'+provTotals[cp];
+    const maxProv=Math.max(...Object.values(provTotals));
+    const compare=[
+      {label:'AWS',cost:'$412',v:412,fill:'linear-gradient(90deg,#7c6cff,#8b7dff)',tc:'var(--text)'},
+      {label:'GCP',cost:'$388',v:388,fill:'linear-gradient(90deg,#33d6c8,#3ecf8e)',tc:'var(--text)'},
+      {label:'Azure',cost:'$441',v:441,fill:'linear-gradient(90deg,#5b9bd5,#7c6cff)',tc:'var(--text)'},
+    ].map(p=>({...p, pct:Math.round(p.v/maxProv*100)}));
+    const base=provTotals[cp];
+    const projBars=['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'].map((m,i)=>{ const val=base*Math.pow(1.08,i); return {m, val, h:Math.round(28+ (val-360)/460*96), fill:i===0?'linear-gradient(180deg,var(--accent),var(--accent-2))':'var(--border-strong)'}; });
+
+    // ---- DIAGRAM ----
+    const dv=this.state.diagView;
+    const diagViews=[{k:'infrastructure',label:'Infrastructure'},{k:'application',label:'Application'}].map(v=>({label:v.label, onClick:()=>this.setDiagView(v.k),
+      style:`background:${dv===v.k?'var(--accent-soft)':'transparent'};color:${dv===v.k?'var(--accent)':'var(--text-2)'};border:0;padding:6px 14px;border-radius:7px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer`}));
+    const diagLegend=[{label:'Ingress',color:'var(--accent-2)'},{label:'Compute',color:'var(--accent)'},{label:'Data',color:'#5b9bd5'},{label:'Events',color:'var(--green)'}];
+
+    // ---- DEPLOY ----
+    const ds=this.state.deployStep;
+    const stepDefs=[{title:'Configure',sub:'target & env'},{title:'Push image',sub:'to registry'},{title:'Roll out',sub:'to cluster'},{title:'Live',sub:'health verified'}];
+    const deploySteps=stepDefs.map((s,i)=>{
+      const done=i<ds, active=i===ds;
+      let circle,inner='';
+      if(done){ circle='width:30px;height:30px;border-radius:50%;background:var(--accent);display:grid;place-items:center;flex:none'; inner='<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+      else if(active){ circle='width:30px;height:30px;border-radius:50%;background:var(--accent-soft);border:2px solid var(--accent);color:var(--accent);display:grid;place-items:center;flex:none;font-size:12px;font-weight:700'; inner=String(i+1); }
+      else { circle='width:30px;height:30px;border-radius:50%;background:var(--surface);border:1px solid var(--border-strong);color:var(--text-3);display:grid;place-items:center;flex:none;font-size:12px;font-weight:600'; inner=String(i+1); }
+      return {title:s.title, sub:s.sub, circle, inner:H(inner), titleColor: (done||active)?'var(--text)':'var(--text-3)',
+        showBar:i<stepDefs.length-1, flex:i<stepDefs.length-1?1:0, barColor: i<ds?'var(--accent)':'var(--border-strong)'};
+    });
+    const dt=this.state.deployTarget;
+    const targetDefs=[{k:'eks',name:'AWS EKS',sub:'orbit-prod · eu-west-1',icon:ICON.k8s,tint:'rgba(124,108,255,.14)',fg:'#7c6cff'},{k:'gke',name:'Google GKE',sub:'Autopilot cluster',icon:ICON.k8s,tint:'rgba(51,214,200,.14)',fg:'#33d6c8'},{k:'compose',name:'Docker host',sub:'single-node compose',icon:ICON.docker,tint:'rgba(91,155,213,.14)',fg:'#5b9bd5'}];
+    const deployTargets=targetDefs.map(t=>({name:t.name, sub:t.sub, icon:H(t.icon), tint:t.tint, fg:t.fg, onClick:()=>this.setDeployTarget(t.k),
+      style:`width:100%;display:flex;align-items:center;gap:11px;background:${dt===t.k?'var(--accent-soft)':'var(--bg-elev)'};border:1px solid ${dt===t.k?'var(--accent)':'var(--border)'};border-radius:11px;padding:11px 13px;cursor:pointer;font-family:inherit`,
+      radio:`width:16px;height:16px;border-radius:50%;border:2px solid ${dt===t.k?'var(--accent)':'var(--border-strong)'};flex:none;box-shadow:${dt===t.k?'inset 0 0 0 3px var(--accent)':'none'}`}));
+    const deployStatusLabel=this.state.deployDone?'Deployment successful':(this.state.deployRunning?'Deploying…':'Ready to deploy');
+    const deployDotColor=this.state.deployDone?'var(--green)':(this.state.deployRunning?'var(--amber)':'var(--text-3)');
+    const deployBtnLabel=this.state.deployDone?'Deploy again':(this.state.deployRunning?'Deploying…':'Deploy now');
+    const deployLog=this.state.deployLog;
+
+    // ---- PROJECTS ----
+    const statusPill=(txt,c)=>`font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:6px;background:${c}22;color:${c}`;
+    const projects=[
+      {name:'orbit-api',org:'acme-labs',initial:'O',tint:'linear-gradient(135deg,#f16a6a,#f5b445)',status:'Deployed',sc:'#3ecf8e',tags:['Go','Postgres','EKS'],health:92,hc:'#3ecf8e',updated:'4h ago'},
+      {name:'pulse-web',org:'acme-labs',initial:'P',tint:'linear-gradient(135deg,#7c6cff,#33d6c8)',status:'Analyzing',sc:'#f5b445',tags:['Next.js','Vercel'],health:88,hc:'#3ecf8e',updated:'12m ago'},
+      {name:'ledger-svc',org:'acme-labs',initial:'L',tint:'linear-gradient(135deg,#5b9bd5,#7c6cff)',status:'Deployed',sc:'#3ecf8e',tags:['Rust','gRPC','GKE'],health:95,hc:'#3ecf8e',updated:'2d ago'},
+      {name:'notify-worker',org:'acme-labs',initial:'N',tint:'linear-gradient(135deg,#3ecf8e,#33d6c8)',status:'Needs fixes',sc:'#f16a6a',tags:['Python','Celery'],health:64,hc:'#f5b445',updated:'5d ago'},
+      {name:'edge-gateway',org:'acme-labs',initial:'E',tint:'linear-gradient(135deg,#f5b445,#f16a6a)',status:'Deployed',sc:'#3ecf8e',tags:['Go','Envoy'],health:90,hc:'#3ecf8e',updated:'1w ago'},
+      {name:'data-lake-etl',org:'acme-labs',initial:'D',tint:'linear-gradient(135deg,#33d6c8,#5b9bd5)',status:'Draft',sc:'#6a6a76',tags:['Spark','Airflow'],health:71,hc:'#f5b445',updated:'2w ago'},
+    ].map(p=>({...p, statusStyle:statusPill(p.status,p.sc), healthColor:p.hc, onClick:()=>this.go('dashboard')}));
+
+    // ---- DEPLOYMENT HISTORY ----
+    const dbadge=(s,c)=>`display:inline-block;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:6px;background:${c}22;color:${c}`;
+    const deploys=[
+      {status:'Success',sc:'#3ecf8e',version:'1.4.0',commit:'a3f9c1',msg:'add readiness probe',target:'EKS · prod',who:'DR',byName:'Dana R.',avatarBg:'#7c6cff',dur:'1m 42s',when:'4h ago'},
+      {status:'Success',sc:'#3ecf8e',version:'1.3.9',commit:'7b2e04',msg:'bump grpc',target:'EKS · prod',who:'JM',byName:'Jae M.',avatarBg:'#33d6c8',dur:'1m 51s',when:'yesterday'},
+      {status:'Failed',sc:'#f16a6a',version:'1.3.8',commit:'c81a55',msg:'migrate schema',target:'EKS · prod',who:'DR',byName:'Dana R.',avatarBg:'#7c6cff',dur:'2m 09s',when:'yesterday'},
+      {status:'Success',sc:'#3ecf8e',version:'1.3.8',commit:'c81a55',msg:'migrate schema (retry)',target:'EKS · prod',who:'CI',byName:'CI bot',avatarBg:'#5b9bd5',dur:'1m 38s',when:'2d ago'},
+      {status:'Success',sc:'#3ecf8e',version:'1.3.7',commit:'19ff02',msg:'cache warm-up',target:'EKS · staging',who:'PL',byName:'Priya L.',avatarBg:'#f5b445',dur:'1m 20s',when:'3d ago'},
+      {status:'Rolled back',sc:'#f5b445',version:'1.3.6',commit:'44de9a',msg:'new rate limiter',target:'EKS · prod',who:'JM',byName:'Jae M.',avatarBg:'#33d6c8',dur:'3m 02s',when:'4d ago'},
+    ].map(d=>({...d, badge:dbadge(d.status,d.sc)}));
+
+    // ---- INTEGRATIONS ----
+    const ipill=(txt,on)=>`font-size:11px;font-weight:600;padding:4px 11px;border-radius:7px;${on?'background:rgba(62,207,142,.16);color:var(--green)':'background:var(--bg-elev);color:var(--text-3);border:1px solid var(--border)'}`;
+    const integrations=[
+      {name:'AWS',desc:'EKS, RDS, ECR · eu-west-1',icon:ICON.aws,tint:'rgba(245,180,69,.14)',fg:'#f5b445',state:'Connected',on:true},
+      {name:'GitHub',desc:'acme-labs · 6 repos',icon:ICON.registry,tint:'rgba(255,255,255,.08)',fg:'var(--text)',state:'Connected',on:true},
+      {name:'GHCR',desc:'Container registry',icon:ICON.registry,tint:'rgba(124,108,255,.14)',fg:'#7c6cff',state:'Connected',on:true},
+      {name:'Grafana Cloud',desc:'Dashboards & alerts',icon:ICON.chart,tint:'rgba(245,130,69,.14)',fg:'#f5824a',state:'Connected',on:true},
+      {name:'Slack',desc:'Deploy notifications',icon:ICON.slack,tint:'rgba(51,214,200,.14)',fg:'#33d6c8',state:'Connect',on:false},
+      {name:'Datadog',desc:'APM & log pipeline',icon:ICON.chart,tint:'rgba(124,108,255,.14)',fg:'#7c6cff',state:'Connect',on:false},
+    ].map(i=>({...i, icon:H(i.icon), pill:ipill(i.state,i.on)}));
+    const apiKeys=[
+      {name:'CI pipeline key',token:'dp_live_••••••••••7f3a',used:'2h ago',scope:'Full access',ss:'#7c6cff'},
+      {name:'Terraform provider',token:'dp_live_••••••••••b29c',used:'yesterday',scope:'Read/write',ss:'#33d6c8'},
+      {name:'Read-only metrics',token:'dp_live_••••••••••14ee',used:'5d ago',scope:'Read only',ss:'#6a6a76'},
+    ].map(k=>({...k, scopeStyle:`font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;background:${k.ss}22;color:${k.ss}`}));
+
+    // ---- TEAM ----
+    const rolePill=(r,c)=>`font-size:11px;font-weight:600;padding:4px 11px;border-radius:7px;background:${c}22;color:${c}`;
+    const members=[
+      {name:'Dana Reyes',email:'dana@acme-labs.io',initials:'DR',bg:'linear-gradient(135deg,#33d6c8,#7c6cff)',role:'Owner',rc:'#7c6cff'},
+      {name:'Jae Mercer',email:'jae@acme-labs.io',initials:'JM',bg:'linear-gradient(135deg,#f16a6a,#f5b445)',role:'Admin',rc:'#33d6c8'},
+      {name:'Priya Lakshmi',email:'priya@acme-labs.io',initials:'PL',bg:'linear-gradient(135deg,#5b9bd5,#33d6c8)',role:'Member',rc:'#6a6a76'},
+      {name:'Tom Okafor',email:'tom@acme-labs.io',initials:'TO',bg:'linear-gradient(135deg,#7c6cff,#f16a6a)',role:'Member',rc:'#6a6a76'},
+      {name:'CI service account',email:'ci@acme-labs.io',initials:'CI',bg:'linear-gradient(135deg,#3ecf8e,#33d6c8)',role:'Bot',rc:'#3ecf8e'},
+    ].map(m=>({...m, roleStyle:rolePill(m.role,m.rc)}));
+    const planFeatures=['Unlimited repositories','Full DevOps asset generation','Terraform state management','Priority AI assistant'];
+
+    const cmd=(label,kind,icon,fn)=>({label,kind,icon:H(icon),onClick:fn});
+    const cmdItems=[
+      cmd('Go to Dashboard','Navigate',ICON.dashboard,()=>this.go('dashboard')),
+      cmd('Run repository analysis','Action',ICON.repo,()=>this.go('analysis',this.startAnalysis)),
+      cmd('View generated assets','Navigate',ICON.docker,()=>this.go('generator')),
+      cmd('Ask the AI assistant','Assistant',ICON.spark,()=>this.go('assistant')),
+      cmd('Open security report','Navigate',ICON.shield,()=>this.go('security')),
+      cmd('Toggle light / dark theme','Preference',ICON.spark,()=>{this.toggleTheme();this.setState({cmdOpen:false});}),
+    ];
+
+    // ---- notifications ----
+    const notifBase=[
+      {group:'Today', items:[
+        {icon:ICON.shield, tint:'rgba(241,106,106,.14)', fg:'#f16a6a', title:'High-severity CVE detected', chip:'Security', body:'CVE-2024-2961 was found in the glibc base layer. The generated Dockerfile moves you to distroless/static, which removes it.', time:'2 hours ago', cat:'security', unread:true},
+        {icon:ICON.rocket, tint:'rgba(62,207,142,.14)', fg:'#3ecf8e', title:'Deployment succeeded', chip:'Deploy', body:'orbit-api:1.4.0 is live at orbit.acme.dev — rollout completed in 41s across 3 replicas.', time:'4 hours ago', cat:'deploy', unread:true},
+        {icon:ICON.spark, tint:'rgba(124,108,255,.14)', fg:'#7c6cff', title:'11 DevOps assets generated', chip:'System', body:'Dockerfile, Kubernetes, Helm, Terraform and CI/CD pipelines are ready to review.', time:'4 hours ago', cat:'system', unread:true},
+      ]},
+      {group:'Earlier', items:[
+        {icon:ICON.coin, tint:'rgba(245,180,69,.14)', fg:'#f5b445', title:'Cost estimate updated', chip:'System', body:'Projected AWS spend dropped 18% to $412/mo after right-sizing the node group.', time:'Yesterday', cat:'system', unread:false},
+        {icon:ICON.users, tint:'rgba(51,214,200,.14)', fg:'#33d6c8', title:'Jae Mercer mentioned you', chip:'Mention', body:'“@dana can you review the Terraform RDS module before we ship to prod?”', time:'Yesterday', cat:'mention', unread:false},
+        {icon:ICON.plug, tint:'rgba(91,155,213,.14)', fg:'#5b9bd5', title:'Slack integration connected', chip:'System', body:'Deployment and security alerts will now post to #platform-alerts.', time:'2 days ago', cat:'system', unread:false},
+      ]},
+    ];
+    const nf=this.state.notifFilter, allRead=this.state.notifAllRead;
+    const chipColor={Security:'--red',Deploy:'--green',System:'--accent',Mention:'--accent-2'};
+    const matchNotif=(n)=> nf==='all' || (nf==='unread'&&n.unread&&!allRead) || (nf==='mention'&&n.cat==='mention') || (nf==='security'&&n.cat==='security');
+    const notifGroups=notifBase.map(g=>{
+      const items=g.items.filter(matchNotif).map(n=>{
+        const unread=n.unread&&!allRead, cc=chipColor[n.chip]||'--text-3';
+        return {...n, unread, icon:H(n.icon),
+          wrap:`display:flex;gap:13px;background:var(--surface);border:1px solid ${unread?'var(--border-strong)':'var(--border)'};border-radius:13px;padding:15px 17px`,
+          chipStyle:`font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(${cc});background:color-mix(in srgb,var(${cc}) 15%,transparent);padding:2px 7px;border-radius:6px`};
+      });
+      return {group:g.group, items, show:items.length>0};
+    });
+    const notifEmpty=notifGroups.every(g=>!g.show);
+    const totalUnread=allRead?0:notifBase.reduce((a,g)=>a+g.items.filter(n=>n.unread).length,0);
+    const notifSubtitle=totalUnread>0?`You have ${totalUnread} unread notification${totalUnread>1?'s':''}`:"You're all caught up";
+    const ntab=(label,key,count)=>{
+      const active=nf===key;
+      return {label, count:count||null, onClick:()=>this.setNotifFilter(key),
+        style:`display:inline-flex;align-items:center;gap:7px;background:${active?'var(--accent-soft)':'var(--surface)'};border:1px solid ${active?'var(--accent)':'var(--border)'};color:${active?'var(--accent)':'var(--text-2)'};padding:7px 13px;border-radius:9px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer`,
+        countStyle:`font-size:10px;font-weight:700;background:${active?'var(--accent)':'var(--surface-2)'};color:${active?'#fff':'var(--text-3)'};padding:1px 6px;border-radius:5px`};
+    };
+    const notifTabs=[ntab('All','all',null), ntab('Unread','unread',totalUnread), ntab('Mentions','mention',null), ntab('Security','security',null)];
+
+    // ---- activity / audit log ----
+    const auditBase=[
+      {cat:'deploy', title:'Deployed orbit-api:1.4.0 to production', actor:'Dana Reyes', ini:'DR', abg:'linear-gradient(135deg,#33d6c8,#7c6cff)', target:'eks/orbit-prod', source:'CLI · 10.4.2.19', time:'Today 14:22', status:'--green'},
+      {cat:'security', title:'Resolved CVE-2024-2961 via base image bump', actor:'DevPilot AI', ini:'AI', abg:'linear-gradient(135deg,#7c6cff,#33d6c8)', target:'Dockerfile', source:'Automated', time:'Today 10:05', status:'--green'},
+      {cat:'config', title:'Rotated production API key', actor:'Jae Mercer', ini:'JM', abg:'linear-gradient(135deg,#f16a6a,#f5b445)', target:'key_live_9f…c2', source:'Web · 88.12.4.7', time:'Today 09:40', status:'--green'},
+      {cat:'access', title:'Invited tom@acme-labs.io as Member', actor:'Dana Reyes', ini:'DR', abg:'linear-gradient(135deg,#33d6c8,#7c6cff)', target:'team/members', source:'Web · 10.4.2.19', time:'Yesterday 17:10', status:'--green'},
+      {cat:'deploy', title:'Rolled back orbit-api:1.3.8 in staging', actor:'CI service account', ini:'CI', abg:'linear-gradient(135deg,#3ecf8e,#33d6c8)', target:'eks/orbit-stg', source:'CI · runner-04', time:'Yesterday 12:33', status:'--amber'},
+      {cat:'security', title:'Secret scan flagged config/dev.yaml', actor:'DevPilot AI', ini:'AI', abg:'linear-gradient(135deg,#7c6cff,#33d6c8)', target:'orbit-api', source:'Automated', time:'Yesterday 08:15', status:'--red'},
+      {cat:'config', title:'Updated Terraform RDS instance class', actor:'Priya Lakshmi', ini:'PL', abg:'linear-gradient(135deg,#5b9bd5,#33d6c8)', target:'terraform/rds', source:'Web · 45.9.3.2', time:'2 days ago', status:'--green'},
+      {cat:'access', title:'Revoked key key_live_2a…7d', actor:'Dana Reyes', ini:'DR', abg:'linear-gradient(135deg,#33d6c8,#7c6cff)', target:'integrations', source:'Web · 10.4.2.19', time:'2 days ago', status:'--green'},
+    ];
+    const auditIcon={deploy:ICON.rocket, security:ICON.shield, config:ICON.terraform, access:ICON.users};
+    const auditTint={deploy:'rgba(62,207,142,.13)', security:'rgba(241,106,106,.13)', config:'rgba(139,125,255,.13)', access:'rgba(51,214,200,.13)'};
+    const auditFg={deploy:'#3ecf8e', security:'#f16a6a', config:'#8b7dff', access:'#33d6c8'};
+    const af=this.state.auditFilter;
+    const auditRows=auditBase.filter(a=>af==='all'||a.cat===af).map(a=>({...a, icon:H(auditIcon[a.cat]), tint:auditTint[a.cat], fg:auditFg[a.cat], statusStyle:`width:7px;height:7px;border-radius:50%;background:var(${a.status});flex:none`}));
+    const acount=(k)=> k==='all'?auditBase.length:auditBase.filter(a=>a.cat===k).length;
+    const afil=(label,key)=>{
+      const active=af===key;
+      return {label, count:acount(key), onClick:()=>this.setAuditFilter(key),
+        style:`display:inline-flex;align-items:center;gap:7px;background:${active?'var(--accent-soft)':'var(--surface)'};border:1px solid ${active?'var(--accent)':'var(--border)'};color:${active?'var(--accent)':'var(--text-2)'};padding:7px 13px;border-radius:9px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer`,
+        countStyle:`font-size:10px;font-weight:700;background:${active?'var(--accent)':'var(--surface-2)'};color:${active?'#fff':'var(--text-3)'};padding:1px 6px;border-radius:5px;margin-left:1px`};
+    };
+    const auditFilters=[afil('All events','all'),afil('Deployments','deploy'),afil('Security','security'),afil('Access','access'),afil('Config','config')];
+
+    // ---- documentation ----
+    const dP='margin:0 0 15px',dH2='font-size:22px;color:var(--text);letter-spacing:-.02em;margin:0 0 8px;font-weight:700',dH3='font-size:15.5px;color:var(--text);margin:28px 0 10px;font-weight:600',dMeta='color:var(--text-3);margin:0 0 24px;font-size:12.5px',dList='margin:0 0 16px;padding-left:20px;display:flex;flex-direction:column;gap:7px',dCode="background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:#c9c9d4;margin:0 0 16px;white-space:pre",dCall='display:flex;gap:12px;background:var(--accent-soft);border:1px solid rgba(124,108,255,.22);border-radius:11px;padding:13px 15px;margin:0 0 18px;font-size:13px;color:var(--text-2);line-height:1.55',dBar='width:4px;align-self:stretch;background:var(--accent);border-radius:3px;flex:none',dCd="font-family:'JetBrains Mono',monospace;font-size:.88em;background:var(--bg-elev);border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--accent-2)";
+    const docBodies={
+      'getting-started':`<h2 style="${dH2}">Getting started</h2><p style="${dMeta}">Introduction · 3 min read</p><p style="${dP}">DevPilot AI turns any GitHub repository into a production-ready deployment package. Point it at a repo and it analyzes your stack, then generates Docker, Kubernetes, Terraform, CI/CD and monitoring assets you can review, edit and ship — usually in under three minutes.</p><div style="${dCall}"><span style="${dBar}"></span><span>New here? The fastest path is to connect a repo from the dashboard and watch the live analysis run end to end.</span></div><h3 style="${dH3}">How it works</h3><ol style="${dList}"><li><strong style="color:var(--text)">Connect</strong> a GitHub repository with read-only access.</li><li><strong style="color:var(--text)">Analyze</strong> — DevPilot detects languages, frameworks, services and dependencies.</li><li><strong style="color:var(--text)">Generate</strong> Docker, K8s, Helm, Terraform and CI/CD assets.</li><li><strong style="color:var(--text)">Review &amp; deploy</strong> from the built-in editor and deploy wizard.</li></ol><h3 style="${dH3}">Install the CLI</h3><p style="${dP}">Prefer the terminal? The CLI mirrors everything in the app.</p><pre style="${dCode}"><span style="color:#5a5a66"># macOS / Linux</span>\nbrew install devpilot\ndevpilot login\ndevpilot analyze github.com/acme-labs/orbit-api</pre>`,
+      'connect-repo':`<h2 style="${dH2}">Connecting a repository</h2><p style="${dMeta}">Guides · 2 min read</p><p style="${dP}">DevPilot needs read-only access to analyze code and open pull requests for generated assets. It never pushes to your default branch without explicit approval.</p><h3 style="${dH3}">Grant access</h3><ol style="${dList}"><li>Install the DevPilot GitHub App from <span style="${dCd}">Integrations &amp; keys</span>.</li><li>Select the organizations and repositories to expose.</li><li>Confirm the requested scopes and finish.</li></ol><h3 style="${dH3}">Required scopes</h3><ul style="${dList}"><li>Read repository contents &amp; metadata</li><li>Read commit history for secret scanning</li><li>Open pull requests for generated assets</li></ul><div style="${dCall}"><span style="${dBar}"></span><span>DevPilot performs a shallow clone inside an ephemeral sandbox. Your source is never persisted after analysis completes.</span></div>`,
+      'assets':`<h2 style="${dH2}">Reviewing generated assets</h2><p style="${dMeta}">Guides · 4 min read</p><p style="${dP}">Every analysis produces a bundle of DevOps assets grouped by purpose. Open any file in the generator to inspect, edit and copy it — or download the whole package as a zip.</p><h3 style="${dH3}">What gets generated</h3><ul style="${dList}"><li><strong style="color:var(--text)">Dockerfile</strong> — multi-stage, distroless, non-root</li><li><strong style="color:var(--text)">Compose</strong> — local dev stack with Postgres &amp; Redis</li><li><strong style="color:var(--text)">Kubernetes</strong> — Deployment, Service, HPA</li><li><strong style="color:var(--text)">Helm</strong> — chart with staging &amp; prod values</li><li><strong style="color:var(--text)">Terraform</strong> — EKS, RDS and networking</li><li><strong style="color:var(--text)">CI/CD</strong> — GitHub Actions build &amp; deploy</li></ul><h3 style="${dH3}">Editing</h3><p style="${dP}">Edits are validated as you type. When you're happy, open a pull request straight from the editor — DevPilot commits only the files you approve.</p><pre style="${dCode}"><span style="color:#7cc4ff">resources</span>:\n  <span style="color:#7cc4ff">requests</span>: { cpu: <span style="color:#8fdf9c">"250m"</span>, memory: <span style="color:#8fdf9c">"256Mi"</span> }\n  <span style="color:#7cc4ff">limits</span>:   { cpu: <span style="color:#8fdf9c">"500m"</span>, memory: <span style="color:#8fdf9c">"512Mi"</span> }</pre>`,
+      'deploy':`<h2 style="${dH2}">Deploying to production</h2><p style="${dMeta}">Guides · 3 min read</p><p style="${dP}">The deploy wizard walks you through target selection, a dry-run plan, and a live rollout with streamed logs and automatic health checks.</p><h3 style="${dH3}">The four steps</h3><ol style="${dList}"><li>Choose a target — EKS, GKE or AKS.</li><li>Review the generated plan and diff.</li><li>Run, and watch the rollout terminal stream live.</li><li>DevPilot verifies readiness probes before shifting traffic.</li></ol><div style="${dCall}"><span style="${dBar}"></span><span>Rollouts are zero-downtime by default: a rolling update is applied and traffic shifts only once every replica passes its readiness probe.</span></div><pre style="${dCode}"><span style="color:#5a5a66"># deploy the current package</span>\ndevpilot deploy --target eks --env production</pre>`,
+      'cli':`<h2 style="${dH2}">CLI reference</h2><p style="${dMeta}">Reference</p><p style="${dP}">The most common commands. Run <span style="${dCd}">devpilot --help</span> for the complete list.</p><pre style="${dCode}">devpilot login                       <span style="color:#5a5a66"># authenticate</span>\ndevpilot analyze &lt;repo&gt;              <span style="color:#5a5a66"># run analysis</span>\ndevpilot generate                    <span style="color:#5a5a66"># regenerate assets</span>\ndevpilot deploy --target eks --env prod\ndevpilot cost --provider aws         <span style="color:#5a5a66"># estimate spend</span></pre>`,
+    };
+    const docMeta={'getting-started':{s:'Introduction',t:'Getting started'},'connect-repo':{s:'Guides',t:'Connecting a repository'},'assets':{s:'Guides',t:'Reviewing generated assets'},'deploy':{s:'Guides',t:'Deploying to production'},'cli':{s:'Reference',t:'CLI reference'}};
+    const docOrder=['getting-started','connect-repo','assets','deploy','cli'];
+    const dpg=this.state.docPage;
+    const docNavGroups=[{group:'Introduction', keys:['getting-started']},{group:'Guides', keys:['connect-repo','assets','deploy']},{group:'Reference', keys:['cli']}];
+    const docNav=docNavGroups.map(g=>({group:g.group, items:g.keys.map(k=>{
+      const active=dpg===k;
+      return {label:docMeta[k].t, onClick:()=>this.setDocPage(k),
+        style:`width:100%;display:block;text-align:left;background:${active?'var(--accent-soft)':'transparent'};border:0;border-left:2px solid ${active?'var(--accent)':'transparent'};border-radius:0 7px 7px 0;padding:7px 12px;margin:1px 0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:${active?'600':'500'};color:${active?'var(--accent)':'var(--text-2)'}`};
+    })}));
+    const di=docOrder.indexOf(dpg);
+    const prevKey=di>0?docOrder[di-1]:null, nextKey=di<docOrder.length-1?docOrder[di+1]:null;
+    const docBody=H(docBodies[dpg]||''), docTitle=docMeta[dpg].t, docSection=docMeta[dpg].s;
+    const docPrev=!!prevKey, docPrevLabel=prevKey?docMeta[prevKey].t:'', docPrevGo=()=>{ if(prevKey) this.setDocPage(prevKey); };
+    const docNext=!!nextKey, docNextLabel=nextKey?docMeta[nextKey].t:'', docNextGo=()=>{ if(nextKey) this.setDocPage(nextKey); };
+
+    return {
+      rootRef:this.rootRef, theme:this.state.theme,
+      isMarketing, isLanding:r==='landing', isConnect:r==='connect',
+      isApp:!isMarketing, isDashboard:r==='dashboard', isAnalysis:r==='analysis',
+      isGenerator:r==='generator', isAssistant:r==='assistant',
+      isSecurity:r==='security', isCost:r==='cost', isDiagram:r==='diagram', isDeploy:r==='deploy',
+      isProjects:r==='projects', isHistory:r==='history', isIntegrations:r==='integrations', isTeam:r==='team',
+      isNotifications:r==='notifications', isActivity:r==='activity', isDocs:r==='docs',
+      goDeploy:this.goDeploy, projects, deploys, integrations, apiKeys, members, planFeatures,
+      pageTitle:titles[r]||'',
+      sevArcs, sevLegend, secStats, sevFilters, vulns,
+      providers, costProvider:cp, costRows, costTotal, compare, projBars,
+      diagViews, diagLegend,
+      deploySteps, deployTargets, startDeploy:this.startDeploy, deployStatusLabel, deployDotColor, deployBtnLabel,
+      deployElapsed:this.state.deployElapsed, deployLog, deployRunning:this.state.deployRunning,
+      repoUrl:this.state.repoUrl, setRepo:this.setRepo, submitRepo:this.submitRepo,
+      goConnect:this.goConnect, goDashboard:this.goDashboard, goGenerator:this.goGenerator,
+      goCost:this.goCost, goAssistant:this.goAssistant, goAnalysis:this.goAnalysis,
+      toggleTheme:this.toggleTheme,
+      themeIcon:H(this.state.theme==='dark'
+        ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
+        : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 12.8A8 8 0 1 1 11.2 3a6 6 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>'),
+      nav:this.navModel(),
+      goNotifications:this.goNotifications, goActivity:this.goActivity, goDocs:this.goDocs,
+      mobileNav:this.state.mobileNav, toggleMobileNav:this.toggleMobileNav, closeMobileNav:this.closeMobileNav,
+      notifGroups, notifTabs, notifEmpty, notifSubtitle, markAllRead:this.markAllRead,
+      auditRows, auditFilters,
+      docNav, docBody, docTitle, docSection, docPrev, docPrevLabel, docPrevGo, docNext, docNextLabel, docNextGo,
+      openCmd:this.openCmd, closeCmd:this.closeCmd, cmdOpen:this.state.cmdOpen, stop:this.stop, cmdItems,
+      previewSteps:['Detected Go 1.22 · Chi · Postgres','Mapped 3 services & dependencies','Generated Dockerfile + K8s + Terraform','Estimated $412/mo on AWS'],
+      scopes:['Read repository contents & metadata','Read commit history for secret scanning','Open pull requests for generated assets'],
+      timeline, analysisPct:pct, analysisDone:this.state.analysisDone,
+      analysisStatus:this.state.analysisDone?'Analysis complete · 11 assets generated':(this.state.analysisIdx>=0?this.steps[this.state.analysisIdx].t+'…':'Starting analysis…'),
+      restartAnalysis:this.restartAnalysis, stack:this.stack,
+      scores, assetCards, costBars, recs, activity,
+      genFiles, activeFile, downloadAll:()=>{},
+      chat, suggestions, chatInput:this.state.chatInput, setChatInput:this.setChatInput, sendChat:this.sendChat,
+    };
+  }
+}
+</script>
+</body>
+</html>
