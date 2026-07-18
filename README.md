@@ -46,6 +46,11 @@ DevPilot-AI/
 │   └── prototype/               # clickable design reference (do not ship)
 │       ├── DevPilot AI.dc.html  # prototype (design source of truth)
 │       └── support.js           # generated dc-runtime (vendored — do not edit)
+├── services/
+│   └── api/                     # API service — Fastify + TypeScript (ADR-002)
+│       ├── src/routes/          # health, me, projects, analyses (+ SSE)
+│       ├── src/lib/             # shared types + sample data
+│       └── src/db/migrations/   # Postgres schema (SDD §11)
 ├── docs/
 │   ├── DevPilot_AI_Full_Project_Plan.md   # the SDD
 │   ├── handoff/BACKEND_HANDOFF.md         # data models, API surface, jobs
