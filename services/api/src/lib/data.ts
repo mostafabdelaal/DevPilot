@@ -20,10 +20,10 @@ export const SAMPLE_TEAM: Team = {
 };
 
 export const SAMPLE_PROJECTS: Project[] = [
-  { id: "prj_orbit", name: "orbit-api", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 88, securityScore: 78, deployReadiness: 91, cloudReadiness: 82, lastAnalyzedAt: "2026-07-18T06:00:00Z", status: "healthy" },
-  { id: "prj_payments", name: "payments-svc", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 82, securityScore: 80, deployReadiness: 85, cloudReadiness: 79, lastAnalyzedAt: "2026-07-18T03:00:00Z", status: "healthy" },
-  { id: "prj_web", name: "web-dashboard", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 71, securityScore: 68, deployReadiness: 74, cloudReadiness: 70, lastAnalyzedAt: "2026-07-17T09:00:00Z", status: "review" },
-  { id: "prj_legacy", name: "legacy-billing", org: "acme-labs", defaultBranch: "master", provider: "github", healthScore: 54, securityScore: 49, deployReadiness: 51, cloudReadiness: 45, lastAnalyzedAt: "2026-07-12T10:00:00Z", status: "at_risk" },
+  { id: "prj_orbit", name: "orbit-api", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 88, securityScore: 78, deployReadiness: 91, cloudReadiness: 82, lastAnalyzedAt: "2026-07-18T06:00:00Z", status: "healthy", tags: ["Go", "Postgres", "gRPC"], updatedAt: "2h ago" },
+  { id: "prj_payments", name: "payments-svc", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 82, securityScore: 80, deployReadiness: 85, cloudReadiness: 79, lastAnalyzedAt: "2026-07-18T03:00:00Z", status: "healthy", tags: ["Go", "Stripe"], updatedAt: "5h ago" },
+  { id: "prj_web", name: "web-dashboard", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 71, securityScore: 68, deployReadiness: 74, cloudReadiness: 70, lastAnalyzedAt: "2026-07-17T09:00:00Z", status: "review", tags: ["Next.js", "TypeScript"], updatedAt: "1d ago" },
+  { id: "prj_legacy", name: "legacy-billing", org: "acme-labs", defaultBranch: "master", provider: "github", healthScore: 54, securityScore: 49, deployReadiness: 51, cloudReadiness: 45, lastAnalyzedAt: "2026-07-12T10:00:00Z", status: "at_risk", tags: ["Ruby", "MySQL"], updatedAt: "6d ago" },
 ];
 
 export const SAMPLE_STEPS: AnalysisStep[] = [
