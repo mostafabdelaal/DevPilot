@@ -32,6 +32,8 @@ export interface Project {
   cloudReadiness: number;
   lastAnalyzedAt: string | null;
   status: "healthy" | "review" | "at_risk";
+  tags: string[];
+  updatedAt: string;
 }
 
 export type AnalysisStatus = "queued" | "running" | "done" | "failed";
