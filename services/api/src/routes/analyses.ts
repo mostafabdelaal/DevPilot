@@ -1,7 +1,13 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import { config } from "../config.js";
-import { SAMPLE_STEPS, sampleAnalysis } from "../lib/data.js";
+import {
+  SAMPLE_ASSETS,
+  SAMPLE_COST,
+  SAMPLE_SECURITY,
+  SAMPLE_STEPS,
+  sampleAnalysis,
+} from "../lib/data.js";
 
 export default async function analysisRoutes(fastify: FastifyInstance) {
   // Kick off an analysis (stub: returns an id the client can subscribe to).
@@ -17,6 +23,15 @@ export default async function analysisRoutes(fastify: FastifyInstance) {
   fastify.get<{ Params: { id: string } }>("/v1/analyses/:id", async (req) =>
     sampleAnalysis("prj_orbit", req.params.id),
   );
+
+  // Security report.
+  fastify.get("/v1/analyses/:id/security", async () => SAMPLE_SECURITY);
+
+  // Cost estimate (all providers).
+  fastify.get("/v1/analyses/:id/cost", async () => SAMPLE_COST);
+
+  // Generated assets.
+  fastify.get("/v1/analyses/:id/assets", async () => SAMPLE_ASSETS);
 
   // Stream step progress over Server-Sent Events.
   fastify.get<{ Params: { id: string } }>(

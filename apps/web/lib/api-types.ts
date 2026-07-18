@@ -56,3 +56,49 @@ export interface Analysis {
   progressPct: number;
   steps: AnalysisStep[];
 }
+
+export interface SecurityFinding {
+  severity: "HIGH" | "MEDIUM" | "LOW";
+  cve: string;
+  title: string;
+  pkg: string;
+  fix: string;
+  status: "Open" | "Patched";
+}
+
+export interface SecurityReport {
+  score: number;
+  verdict: string;
+  severities: { high: number; medium: number; low: number };
+  stats: { label: string; value: string; sub: string }[];
+  findings: SecurityFinding[];
+  secret: { title: string; location: string; value: string; remediated: boolean };
+}
+
+export interface CostRow {
+  name: string;
+  spec: string;
+  cost: number;
+}
+
+export interface CostProviderEstimate {
+  provider: "AWS" | "GCP" | "Azure";
+  region: string;
+  total: number;
+  rows: CostRow[];
+}
+
+export interface CostReport {
+  providers: CostProviderEstimate[];
+  savings: { amount: number; note: string };
+}
+
+export interface GeneratedAsset {
+  key: string;
+  name: string;
+  size: string;
+  language: string;
+  desc: string;
+  note: string;
+  content: string;
+}
