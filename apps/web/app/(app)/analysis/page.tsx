@@ -1,18 +1,30 @@
 import { Card } from "@/components/ui/Card";
+import { apiGetOr } from "@/lib/api";
+import type { Analysis, AnalysisStep, Severity } from "@/lib/api-types";
 
-type Severity = "ok" | "warn" | "danger";
+export const dynamic = "force-dynamic";
 
-const STEPS: { title: string; detail: string; meta?: string; sev?: Severity }[] =
-  [
-    { title: "Cloning repository", detail: "Shallow clone in ephemeral sandbox", meta: "214 files · 3.2 MB", sev: "ok" },
-    { title: "Detecting languages & frameworks", detail: "Language breakdown", meta: "Go 91% · Shell 6% · Dockerfile 3%", sev: "ok" },
-    { title: "Mapping architecture", detail: "Service + dependency graph", meta: "3 external dependencies", sev: "ok" },
-    { title: "Resolving dependencies", detail: "Module + version audit", meta: "2 outdated · 0 yanked", sev: "warn" },
-    { title: "Scanning secrets & vulnerabilities", detail: "Trivy + gitleaks", meta: "1 high · 3 medium · 1 secret", sev: "danger" },
-    { title: "Assessing cloud readiness", detail: "Deploy + scale checks", meta: "Score 82 / 100", sev: "warn" },
-    { title: "Generating DevOps assets", detail: "Templating engine", meta: "11 files produced", sev: "ok" },
-    { title: "Estimating cloud cost", detail: "AWS eu-west-1", meta: "≈ $412 / month", sev: "ok" },
-  ];
+const FALLBACK_STEPS: AnalysisStep[] = [
+  { title: "Cloning repository", detail: "Shallow clone in ephemeral sandbox", meta: "214 files · 3.2 MB", metaSeverity: "ok" },
+  { title: "Detecting languages & frameworks", detail: "Language breakdown", meta: "Go 91% · Shell 6% · Dockerfile 3%", metaSeverity: "ok" },
+  { title: "Mapping architecture", detail: "Service + dependency graph", meta: "3 external dependencies", metaSeverity: "ok" },
+  { title: "Resolving dependencies", detail: "Module + version audit", meta: "2 outdated · 0 yanked", metaSeverity: "warn" },
+  { title: "Scanning secrets & vulnerabilities", detail: "Trivy + gitleaks", meta: "1 high · 3 medium · 1 secret", metaSeverity: "danger" },
+  { title: "Assessing cloud readiness", detail: "Deploy + scale checks", meta: "Score 82 / 100", metaSeverity: "warn" },
+  { title: "Generating DevOps assets", detail: "Templating engine", meta: "11 files produced", metaSeverity: "ok" },
+  { title: "Estimating cloud cost", detail: "AWS eu-west-1", meta: "≈ $412 / month", metaSeverity: "ok" },
+];
+
+const FALLBACK: Analysis = {
+  id: "an_current",
+  projectId: "prj_orbit",
+  ref: "main",
+  status: "done",
+  startedAt: "2026-07-18T06:00:00Z",
+  finishedAt: "2026-07-18T06:01:12Z",
+  progressPct: 100,
+  steps: FALLBACK_STEPS,
+};
 
 const STACK: { name: string; v: string; c: string }[] = [
   { name: "Go", v: "1.22", c: "var(--accent-2)" },
@@ -29,7 +41,10 @@ const META_CLASS: Record<Severity, string> = {
   danger: "bg-red-soft text-red",
 };
 
-export default function AnalysisPage() {
+export default async function AnalysisPage() {
+  const analysis = await apiGetOr<Analysis>("/v1/analyses/an_current", FALLBACK);
+  const steps = analysis.steps;
+
   return (
     <div className="mx-auto max-w-[1240px]">
       {/* Header */}
@@ -40,7 +55,7 @@ export default function AnalysisPage() {
               acme-labs/orbit-api
             </h1>
             <span className="rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-text-3">
-              main
+              {analysis.ref}
             </span>
           </div>
           <p className="text-sm text-text-2">
@@ -56,14 +71,16 @@ export default function AnalysisPage() {
       <div className="mb-4 flex items-center gap-4 rounded-card border border-border bg-surface px-5 py-3.5">
         <div className="flex-1">
           <div className="mb-2 flex justify-between text-xs">
-            <span className="text-text-2">Analysis complete</span>
-            <span className="font-mono text-text-3">100%</span>
+            <span className="text-text-2">
+              {analysis.status === "done" ? "Analysis complete" : "Analyzing…"}
+            </span>
+            <span className="font-mono text-text-3">{analysis.progressPct}%</span>
           </div>
           <div className="h-1.5 overflow-hidden rounded bg-border-strong">
             <div
               className="h-full rounded"
               style={{
-                width: "100%",
+                width: `${analysis.progressPct}%`,
                 background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
               }}
             />
@@ -83,13 +100,13 @@ export default function AnalysisPage() {
           <h3 className="mb-4 text-[11px] font-medium uppercase tracking-wider text-text-2">
             Analysis timeline
           </h3>
-          {STEPS.map((s, i) => (
+          {steps.map((s, i) => (
             <div key={s.title} className="flex gap-3.5">
               <div className="flex flex-col items-center">
                 <span className="grid h-4 w-4 place-items-center rounded-full bg-green text-[9px] text-bg">
                   ✓
                 </span>
-                {i < STEPS.length - 1 && (
+                {i < steps.length - 1 && (
                   <span className="min-h-[14px] w-0.5 flex-1 bg-border-strong" />
                 )}
               </div>
@@ -98,7 +115,7 @@ export default function AnalysisPage() {
                 <div className="mt-0.5 text-xs text-text-2">{s.detail}</div>
                 {s.meta && (
                   <span
-                    className={`mt-1.5 inline-block rounded px-1.5 py-0.5 text-[11px] ${META_CLASS[s.sev ?? "ok"]}`}
+                    className={`mt-1.5 inline-block rounded px-1.5 py-0.5 text-[11px] ${META_CLASS[s.metaSeverity]}`}
                   >
                     {s.meta}
                   </span>

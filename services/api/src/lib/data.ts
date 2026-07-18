@@ -19,6 +19,14 @@ export const SAMPLE_TEAM: Team = {
   renewalDate: "2026-08-01",
 };
 
+export const SAMPLE_MEMBERS: User[] = [
+  { id: "usr_dana", name: "Dana Reyes", email: "dana@acme-labs.io", avatarInitials: "DR", role: "owner" },
+  { id: "usr_jae", name: "Jae Mercer", email: "jae@acme-labs.io", avatarInitials: "JM", role: "admin" },
+  { id: "usr_priya", name: "Priya Lakshmi", email: "priya@acme-labs.io", avatarInitials: "PL", role: "member" },
+  { id: "usr_tom", name: "Tom Okafor", email: "tom@acme-labs.io", avatarInitials: "TO", role: "member" },
+  { id: "usr_ci", name: "CI service account", email: "ci@acme-labs.io", avatarInitials: "CI", role: "bot" },
+];
+
 export const SAMPLE_PROJECTS: Project[] = [
   { id: "prj_orbit", name: "orbit-api", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 88, securityScore: 78, deployReadiness: 91, cloudReadiness: 82, lastAnalyzedAt: "2026-07-18T06:00:00Z", status: "healthy", tags: ["Go", "Postgres", "gRPC"], updatedAt: "2h ago" },
   { id: "prj_payments", name: "payments-svc", org: "acme-labs", defaultBranch: "main", provider: "github", healthScore: 82, securityScore: 80, deployReadiness: 85, cloudReadiness: 79, lastAnalyzedAt: "2026-07-18T03:00:00Z", status: "healthy", tags: ["Go", "Stripe"], updatedAt: "5h ago" },

@@ -1,19 +1,43 @@
 import { Card } from "@/components/ui/Card";
 import { Gauge } from "@/components/ui/Gauge";
+import { apiGetOr } from "@/lib/api";
+import type { Project } from "@/lib/api-types";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+const FALLBACK: Project = {
+  id: "prj_orbit",
+  name: "orbit-api",
+  org: "acme-labs",
+  defaultBranch: "main",
+  provider: "github",
+  healthScore: 88,
+  securityScore: 78,
+  deployReadiness: 91,
+  cloudReadiness: 82,
+  lastAnalyzedAt: null,
+  status: "healthy",
+  tags: ["Go", "Postgres", "gRPC"],
+  updatedAt: "2h ago",
+};
+
+export default async function DashboardPage() {
+  const p = await apiGetOr<Project>("/v1/projects/prj_orbit", FALLBACK);
+
   const scores = [
-    { label: "Health", value: 88 },
-    { label: "Security", value: 74 },
-    { label: "Deploy readiness", value: 91 },
-    { label: "Cloud readiness", value: 82 },
+    { label: "Health", value: p.healthScore },
+    { label: "Security", value: p.securityScore },
+    { label: "Deploy readiness", value: p.deployReadiness },
+    { label: "Cloud readiness", value: p.cloudReadiness },
   ];
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-text-2">acme-labs / orbit-api · main</p>
+        <p className="text-sm text-text-2">
+          {p.org} / {p.name} · {p.defaultBranch}
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
