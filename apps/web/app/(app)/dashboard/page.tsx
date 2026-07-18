@@ -1,10 +1,6 @@
-import { Card, StatTile } from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
+import { Gauge } from "@/components/ui/Gauge";
 
-/**
- * Dashboard — scaffold. Score tiles use plain numbers for now; the prototype's
- * radial score gauges and cost bars will be rebuilt with the dataviz approach
- * during the dashboard sprint.
- */
 export default function DashboardPage() {
   const scores = [
     { label: "Health", value: 88 },
@@ -22,7 +18,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {scores.map((s) => (
-          <StatTile key={s.label} label={s.label} value={s.value} suffix="/ 100" />
+          <Gauge key={s.label} label={s.label} value={s.value} />
         ))}
       </div>
 
