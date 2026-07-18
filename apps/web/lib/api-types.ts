@@ -35,3 +35,24 @@ export interface Project {
   tags: string[];
   updatedAt: string;
 }
+
+export type Severity = "ok" | "warn" | "danger";
+export type AnalysisStatus = "queued" | "running" | "done" | "failed";
+
+export interface AnalysisStep {
+  title: string;
+  detail: string;
+  meta: string;
+  metaSeverity: Severity;
+}
+
+export interface Analysis {
+  id: string;
+  projectId: string;
+  ref: string;
+  status: AnalysisStatus;
+  startedAt: string;
+  finishedAt: string | null;
+  progressPct: number;
+  steps: AnalysisStep[];
+}

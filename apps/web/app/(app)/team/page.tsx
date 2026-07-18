@@ -1,14 +1,27 @@
 import { Card } from "@/components/ui/Card";
+import { apiGetOr } from "@/lib/api";
+import type { Role, Team, User } from "@/lib/api-types";
 
-type Role = "owner" | "admin" | "member" | "bot";
+export const dynamic = "force-dynamic";
 
-const MEMBERS: { name: string; email: string; initials: string; bg: string; role: Role }[] = [
-  { name: "Dana Reyes", email: "dana@acme-labs.io", initials: "DR", bg: "var(--accent)", role: "owner" },
-  { name: "Jae Mercer", email: "jae@acme-labs.io", initials: "JM", bg: "var(--accent-2)", role: "admin" },
-  { name: "Priya Lakshmi", email: "priya@acme-labs.io", initials: "PL", bg: "var(--green)", role: "member" },
-  { name: "Tom Okafor", email: "tom@acme-labs.io", initials: "TO", bg: "var(--amber)", role: "member" },
-  { name: "CI service account", email: "ci@acme-labs.io", initials: "CI", bg: "var(--surface-2)", role: "bot" },
+const FALLBACK_TEAM: Team = {
+  id: "team_acme",
+  name: "acme-labs",
+  plan: "Team",
+  seats: 5,
+  usageThisMonth: 245,
+  renewalDate: "2026-08-01",
+};
+
+const FALLBACK_MEMBERS: User[] = [
+  { id: "usr_dana", name: "Dana Reyes", email: "dana@acme-labs.io", avatarInitials: "DR", role: "owner" },
+  { id: "usr_jae", name: "Jae Mercer", email: "jae@acme-labs.io", avatarInitials: "JM", role: "admin" },
+  { id: "usr_priya", name: "Priya Lakshmi", email: "priya@acme-labs.io", avatarInitials: "PL", role: "member" },
+  { id: "usr_tom", name: "Tom Okafor", email: "tom@acme-labs.io", avatarInitials: "TO", role: "member" },
+  { id: "usr_ci", name: "CI service account", email: "ci@acme-labs.io", avatarInitials: "CI", role: "bot" },
 ];
+
+const AVATAR_BG = ["var(--accent)", "var(--accent-2)", "var(--green)", "var(--amber)", "var(--surface-2)"];
 
 const ROLE_CLASS: Record<Role, string> = {
   owner: "bg-accent-soft text-accent",
@@ -25,7 +38,20 @@ const FEATURES = [
   "Priority support",
 ];
 
-export default function TeamPage() {
+function money(n: number): string {
+  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+export default async function TeamPage() {
+  const [team, members] = await Promise.all([
+    apiGetOr<Team>("/v1/team", FALLBACK_TEAM),
+    apiGetOr<User[]>("/v1/team/members", FALLBACK_MEMBERS),
+  ]);
+
+  const monthlyCap = team.seats * 49;
+  const usagePct = Math.min(100, Math.round((team.usageThisMonth / monthlyCap) * 100));
+  const renews = new Date(team.renewalDate).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
   return (
     <div className="mx-auto max-w-[1080px]">
       <h1 className="mb-5 text-2xl font-semibold tracking-tight">Team &amp; billing</h1>
@@ -35,22 +61,22 @@ export default function TeamPage() {
         <Card className="!rounded-[15px] overflow-hidden !p-0">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <h3 className="text-sm font-semibold">
-              Members <span className="font-normal text-text-3">· 5</span>
+              Members <span className="font-normal text-text-3">· {members.length}</span>
             </h3>
             <button className="rounded-lg border border-border-strong bg-surface px-3 py-1.5 text-[12.5px] font-semibold hover:bg-surface-2">
               Invite
             </button>
           </div>
-          {MEMBERS.map((m) => (
+          {members.map((m, i) => (
             <div
-              key={m.email}
+              key={m.id}
               className="flex items-center gap-3.5 border-b border-border px-5 py-3.5 last:border-0"
             >
               <span
                 className="grid h-[34px] w-[34px] flex-none place-items-center rounded-full text-xs font-bold text-white"
-                style={{ background: m.bg }}
+                style={{ background: AVATAR_BG[i % AVATAR_BG.length] }}
               >
-                {m.initials}
+                {m.avatarInitials}
               </span>
               <div className="min-w-0 flex-1">
                 <div className="text-[13.5px] font-semibold">{m.name}</div>
@@ -74,9 +100,9 @@ export default function TeamPage() {
             }}
           >
             <div className="mb-1.5 text-xs text-text-3">Current plan</div>
-            <div className="text-xl font-bold tracking-tight">Team</div>
+            <div className="text-xl font-bold tracking-tight">{team.plan}</div>
             <div className="mb-4 text-[13px] text-text-2">
-              $49 / seat / month · 5 seats
+              $49 / seat / month · {team.seats} seats
             </div>
             <div className="flex flex-col gap-2.5">
               {FEATURES.map((f) => (
@@ -91,18 +117,18 @@ export default function TeamPage() {
           <Card className="!rounded-[15px] px-5 py-5">
             <div className="mb-2.5 flex justify-between text-[13px]">
               <span className="text-text-2">This month</span>
-              <span className="font-bold">$245.00</span>
+              <span className="font-bold">${money(team.usageThisMonth)}</span>
             </div>
             <div className="mb-2 h-1.5 overflow-hidden rounded bg-bg-elev">
               <div
                 className="h-full"
                 style={{
-                  width: "62%",
+                  width: `${usagePct}%`,
                   background: "linear-gradient(90deg,var(--accent),var(--accent-2))",
                 }}
               />
             </div>
-            <div className="text-[11.5px] text-text-3">Renews Aug 1 · Visa ···· 4242</div>
+            <div className="text-[11.5px] text-text-3">Renews {renews} · Visa ···· 4242</div>
           </Card>
         </div>
       </div>
