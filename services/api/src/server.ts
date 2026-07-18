@@ -4,6 +4,7 @@ import { config } from "./config.js";
 import analysisRoutes from "./routes/analyses.js";
 import healthRoutes from "./routes/health.js";
 import meRoutes from "./routes/me.js";
+import opsRoutes from "./routes/ops.js";
 import projectRoutes from "./routes/projects.js";
 
 export function buildServer() {
@@ -17,6 +18,7 @@ export function buildServer() {
   app.register(meRoutes);
   app.register(projectRoutes);
   app.register(analysisRoutes);
+  app.register(opsRoutes);
 
   return app;
 }

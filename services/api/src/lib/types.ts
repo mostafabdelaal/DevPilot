@@ -103,6 +103,51 @@ export interface GeneratedAsset {
   content: string;
 }
 
+export interface Deployment {
+  status: "succeeded" | "failed" | "rolled_back";
+  version: string;
+  commit: string;
+  message: string;
+  target: string;
+  actor: string;
+  actorInitials: string;
+  duration: string;
+  when: string;
+}
+
+export interface Notification {
+  group: "Today" | "Earlier";
+  category: "security" | "deploy" | "system";
+  title: string;
+  body: string;
+  time: string;
+  unread: boolean;
+}
+
+export interface Integration {
+  name: string;
+  desc: string;
+  connected: boolean;
+}
+
+export interface ApiKey {
+  name: string;
+  token: string;
+  used: string;
+  scope: "read" | "read/write" | "admin";
+}
+
+export interface AuditEvent {
+  category: "deploy" | "security" | "access" | "config";
+  title: string;
+  source: string;
+  actor: string;
+  actorInitials: string;
+  target: string;
+  status: "success" | "warning" | "danger";
+  time: string;
+}
+
 export interface ApiError {
   error: { code: string; message: string; details?: unknown };
 }
